@@ -110,7 +110,6 @@ main {
   font-weight: 400;
 }
 .panel-body {
-  margin: 0;
   padding: 16px 14px;
   color: var(--muted);
 }
