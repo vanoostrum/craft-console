@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# Drive Craft Console in the running app. See ../SKILL.md.
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)"
+run="${CONSOLE_VERIFY_RUN:?set CONSOLE_VERIFY_RUN to a run id, such as \$(date +%Y%m%d-%H%M%S)}"
+state=".verify/$run"
+here=".claude/skills/verify/scripts"
+
+free_port() {
+  node -e 'const s=require("net").createServer();s.listen(0,()=>{console.log(s.address().port);s.close()})'
+}
+
+case "${1:-}" in
+  launch)
+    [[ -f "$state/pid" ]] && kill -0 "$(cat "$state/pid")" 2>/dev/null && {
+      echo "run $run already has an instance on port $(cat "$state/port")" >&2
+      exit 1
+    }
+    mkdir -p "$state"
+    pnpm install --frozen-lockfile
+    pnpm build
+    port="${CONSOLE_VERIFY_PORT:-$(free_port)}"
+    echo "$port" > "$state/port"
+    CONSOLE_DATA=fixtures PORT="$port" setsid pnpm start > "$state/server.log" 2>&1 &
+    echo $! > "$state/pid"
+    for _ in $(seq 1 60); do
+      if [[ "$(curl -fsS "http://127.0.0.1:$port/api/health" 2>/dev/null)" == ok ]]; then
+        echo "ready: http://127.0.0.1:$port run=$run"
+        exit 0
+      fi
+      kill -0 "$(cat "$state/pid")" 2>/dev/null || break
+      sleep 1
+    done
+    echo "the app did not answer /api/health with ok in 60 seconds" >&2
+    cat "$state/server.log" >&2
+    exit 1
+    ;;
+  drive)
+    port="$(cat "$state/port")"
+    node "$here/drive.mjs" "http://127.0.0.1:$port" "$state/evidence"
+    ;;
+  cleanup)
+    if [[ -f "$state/pid" ]]; then
+      kill -- -"$(cat "$state/pid")" 2>/dev/null || true
+      rm -f "$state/pid"
+    fi
+    echo "stopped run $run"
+    ;;
+  *)
+    echo "usage: console-verify launch|drive|cleanup" >&2
+    exit 2
+    ;;
+esac
