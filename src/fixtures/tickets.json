@@ -1,0 +1,146 @@
+[
+  {
+    "key": "NAP-101",
+    "title": "Nap feature 1",
+    "state": "Done",
+    "stateType": "completed",
+    "project": "NapTime",
+    "milestone": "Fixture milestone",
+    "parent": "NAP-100"
+  },
+  {
+    "key": "NAP-102",
+    "title": "Nap feature 2",
+    "state": "Building",
+    "stateType": "started",
+    "project": "NapTime",
+    "milestone": "Fixture milestone",
+    "parent": "NAP-100"
+  },
+  {
+    "key": "NAP-103",
+    "title": "Nap feature 3",
+    "state": "Specifying",
+    "stateType": "started",
+    "project": "NapTime",
+    "milestone": "Fixture milestone",
+    "parent": "NAP-100"
+  },
+  {
+    "key": "NAP-104",
+    "title": "Nap feature 4",
+    "state": "Todo",
+    "stateType": "unstarted",
+    "project": "NapTime",
+    "milestone": "Fixture milestone",
+    "parent": "NAP-100"
+  },
+  {
+    "key": "NAP-105",
+    "title": "Nap feature 5",
+    "state": "Done",
+    "stateType": "completed",
+    "project": "NapTime",
+    "milestone": "Fixture milestone",
+    "parent": "NAP-100"
+  },
+  {
+    "key": "NAP-106",
+    "title": "Nap feature 6",
+    "state": "Building",
+    "stateType": "started",
+    "project": "NapTime",
+    "milestone": "Fixture milestone",
+    "parent": "NAP-100"
+  },
+  {
+    "key": "NAP-107",
+    "title": "Nap feature 7",
+    "state": "Specifying",
+    "stateType": "started",
+    "project": "NapTime",
+    "milestone": null,
+    "parent": "NAP-100"
+  },
+  {
+    "key": "NAP-108",
+    "title": "Nap feature 8",
+    "state": "Todo",
+    "stateType": "unstarted",
+    "project": "NapTime",
+    "milestone": null,
+    "parent": "NAP-100"
+  },
+  {
+    "key": "NAP-109",
+    "title": "Nap feature 9",
+    "state": "Done",
+    "stateType": "completed",
+    "project": "NapTime",
+    "milestone": null,
+    "parent": "NAP-100"
+  },
+  {
+    "key": "NAP-110",
+    "title": "Nap feature 10",
+    "state": "Building",
+    "stateType": "started",
+    "project": "NapTime",
+    "milestone": null,
+    "parent": "NAP-100"
+  },
+  {
+    "key": "NAP-111",
+    "title": "Nap feature 11",
+    "state": "Specifying",
+    "stateType": "started",
+    "project": "NapTime",
+    "milestone": null,
+    "parent": "NAP-100"
+  },
+  {
+    "key": "NAP-112",
+    "title": "Nap feature 12",
+    "state": "Todo",
+    "stateType": "unstarted",
+    "project": "NapTime",
+    "milestone": null,
+    "parent": "NAP-100"
+  },
+  {
+    "key": "CRAFT-901",
+    "title": "Fixture plan step",
+    "state": "Done",
+    "stateType": "completed",
+    "project": "Craft",
+    "milestone": null,
+    "parent": null
+  },
+  {
+    "key": "CRAFT-902",
+    "title": "Fixture spec step",
+    "state": "Done",
+    "stateType": "completed",
+    "project": "Craft",
+    "milestone": null,
+    "parent": null
+  },
+  {
+    "key": "CRAFT-903",
+    "title": "Fixture build step",
+    "state": "Done",
+    "stateType": "completed",
+    "project": "Craft",
+    "milestone": null,
+    "parent": null
+  },
+  {
+    "key": "NAP-100",
+    "title": "Plan: nap features",
+    "state": "Done",
+    "stateType": "completed",
+    "project": "NapTime",
+    "milestone": null,
+    "parent": null
+  }
+]

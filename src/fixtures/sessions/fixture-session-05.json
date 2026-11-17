@@ -1,0 +1,40 @@
+{
+  "repo": "vanoostrum/nap-time",
+  "branch": "nap-105/feature-5",
+  "session_id": "fixture-session-05",
+  "tickets": ["NAP-105"],
+  "segments": [
+    {
+      "step": "craft:build",
+      "ticket": "NAP-105",
+      "started_at": "2026-11-05T09:05:00.000Z",
+      "ended_at": "2026-11-05T09:50:00.000Z",
+      "tokens": {
+        "claude-sonnet-x": {
+          "input_tokens": 500,
+          "output_tokens": 250,
+          "cache_creation_input_tokens": 2000,
+          "cache_read_input_tokens": 30000
+        }
+      },
+      "subagents": []
+    },
+    {
+      "step": "craft:review",
+      "ticket": "NAP-105",
+      "started_at": "2026-11-05T10:05:00.000Z",
+      "ended_at": "2026-11-05T10:50:00.000Z",
+      "tokens": {
+        "claude-sonnet-x": {
+          "input_tokens": 500,
+          "output_tokens": 250,
+          "cache_creation_input_tokens": 2000,
+          "cache_read_input_tokens": 30000
+        }
+      },
+      "subagents": []
+    }
+  ],
+  "event": "SessionEnd",
+  "uploaded_at": "2026-11-05T11:00:00.106170+00:00"
+}

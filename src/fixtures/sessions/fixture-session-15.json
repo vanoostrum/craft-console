@@ -1,0 +1,25 @@
+{
+  "repo": "vanoostrum/nap-time",
+  "branch": "main",
+  "session_id": "fixture-session-15",
+  "tickets": [],
+  "segments": [
+    {
+      "step": "craft:plan",
+      "ticket": null,
+      "started_at": "2026-11-16T09:05:00.000Z",
+      "ended_at": "2026-11-16T09:50:00.000Z",
+      "tokens": {
+        "claude-sonnet-x": {
+          "input_tokens": 1500,
+          "output_tokens": 750,
+          "cache_creation_input_tokens": 2000,
+          "cache_read_input_tokens": 30000
+        }
+      },
+      "subagents": []
+    }
+  ],
+  "event": "Stop",
+  "uploaded_at": "2026-11-16T10:00:00.118510+00:00"
+}

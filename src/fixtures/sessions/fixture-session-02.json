@@ -1,0 +1,47 @@
+{
+  "repo": "vanoostrum/nap-time",
+  "branch": "nap-102/feature-2",
+  "session_id": "fixture-session-02",
+  "tickets": ["NAP-102"],
+  "segments": [
+    {
+      "step": "craft:spec",
+      "ticket": "NAP-102",
+      "started_at": "2026-11-02T09:05:00.000Z",
+      "ended_at": "2026-11-02T09:50:00.000Z",
+      "tokens": {
+        "claude-sonnet-x": {
+          "input_tokens": 200,
+          "output_tokens": 100,
+          "cache_creation_input_tokens": 2000,
+          "cache_read_input_tokens": 30000
+        }
+      },
+      "subagents": [
+        {
+          "agent_id": "agent-02a",
+          "role": "verify",
+          "started_at": "2026-11-02T09:10:00.000Z",
+          "ended_at": "2026-11-02T09:20:00.000Z",
+          "tokens": {
+            "claude-sonnet-x": {
+              "input_tokens": 20,
+              "output_tokens": 10,
+              "cache_creation_input_tokens": 300,
+              "cache_read_input_tokens": 4000
+            }
+          }
+        },
+        {
+          "agent_id": "agent-02b",
+          "role": null,
+          "started_at": "2026-11-02T09:21:00.000Z",
+          "ended_at": null,
+          "tokens": {}
+        }
+      ]
+    }
+  ],
+  "event": "SessionEnd",
+  "uploaded_at": "2026-11-02T10:00:00.102468+00:00"
+}

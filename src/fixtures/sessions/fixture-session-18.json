@@ -1,0 +1,25 @@
+{
+  "repo": "vanoostrum/craft",
+  "branch": "craft-903/thing",
+  "session_id": "fixture-session-18",
+  "tickets": ["CRAFT-903"],
+  "segments": [
+    {
+      "step": "craft:spec",
+      "ticket": "CRAFT-903",
+      "started_at": "2026-11-19T09:05:00.000Z",
+      "ended_at": "2026-11-19T09:50:00.000Z",
+      "tokens": {
+        "claude-sonnet-x": {
+          "input_tokens": 1800,
+          "output_tokens": 900,
+          "cache_creation_input_tokens": 2000,
+          "cache_read_input_tokens": 30000
+        }
+      },
+      "subagents": []
+    }
+  ],
+  "event": "Stop",
+  "uploaded_at": "2026-11-19T10:00:00.122212+00:00"
+}
