@@ -10,3 +10,5 @@ next-env.d.ts
 .env*
 .vercel
 .verify/
+# Written by `next dev`; not part of this repository.
+AGENTS.md

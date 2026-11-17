@@ -1,6 +1,7 @@
 // `pnpm start`: check CONSOLE_DATA, then start the built app. A wrong value
 // stops here with a non-zero status, before the server serves a request.
 import { spawn } from "node:child_process";
+// Node 22.18+ loads the .ts file with its built-in type stripping (see `engines`).
 import { usableDataSource } from "../src/lib/console-data.ts";
 
 try {

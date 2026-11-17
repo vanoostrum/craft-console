@@ -4,7 +4,7 @@ Console for the Craft factory: a dashboard of what craft's work on each project 
 
 ## Run it locally
 
-Needs Node 22 (see `.nvmrc`) and corepack, which brings the pinned pnpm.
+Needs Node 22.18 or later (see `.nvmrc` and `engines`) and corepack, which brings the pinned pnpm.
 
 ```bash
 corepack enable
