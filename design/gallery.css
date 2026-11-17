@@ -53,13 +53,11 @@ th { padding: 10px; font-weight: 500; color: var(--muted); background: var(--sur
 th:first-child, td:first-child { padding-left: 14px; }
 td { padding: 12px 10px; border-top: 1px solid var(--border); font-family: var(--mono); }
 td.name { font-family: var(--sans); font-weight: 600; }
-td.name .repo { font-family: var(--mono); font-weight: 400; color: var(--muted); margin-left: 6px; }
 .num { text-align: right; }
 td.num.strong { color: var(--strong); font-weight: 500; }
 
 @media (max-width: 600px) {
   .topbar { padding: 0 16px; }
   main { padding: 16px; }
-  td.name .repo { display: block; margin: 2px 0 0; }
 }
 .panel-body.actions { padding-top: 0; }
