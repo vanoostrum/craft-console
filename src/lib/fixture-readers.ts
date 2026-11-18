@@ -20,7 +20,7 @@ const tickets: Ticket[] = FixtureTicket.array()
 export const fixtureReaders: Readers = {
   sessions: {
     async sessions() {
-      return sessions;
+      return { sessions, unreadable: [] };
     },
   },
   tickets: {

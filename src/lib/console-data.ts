@@ -2,9 +2,6 @@
 
 export type DataSource = "fixtures" | "live";
 
-export const LIVE_NOT_AVAILABLE =
-  "CONSOLE_DATA=live is not available yet: live data comes with the Live data ticket (CRAFT-63).";
-
 /** Read `CONSOLE_DATA`. Unset or empty means fixtures. Any other unknown value throws. */
 export function parseDataSource(value: string | undefined): DataSource {
   if (value === undefined || value === "" || value === "fixtures")
@@ -13,13 +10,6 @@ export function parseDataSource(value: string | undefined): DataSource {
   throw new Error(
     `CONSOLE_DATA="${value}" is not a data source. Use fixtures or live.`,
   );
-}
-
-/** The data source the app can serve now. Throws for a wrong value, and for live until CRAFT-63. */
-export function usableDataSource(value: string | undefined): "fixtures" {
-  const source = parseDataSource(value);
-  if (source === "live") throw new Error(LIVE_NOT_AVAILABLE);
-  return source;
 }
 
 /** The default monthly price of the owner's Max plan: Max 100 is $100, read 2026-11-18. */
@@ -66,11 +56,11 @@ export function consoleNow(
 
 /** The settings of `process.env` that the pages read. Throws on the first wrong value. */
 export function consoleSettings(env: Record<string, string | undefined>): {
-  source: "fixtures";
+  source: DataSource;
   maxPlanEur: number;
   now: Date;
 } {
-  const source = usableDataSource(env.CONSOLE_DATA);
+  const source = parseDataSource(env.CONSOLE_DATA);
   return {
     source,
     maxPlanEur: parseMaxPlanEur(env.CONSOLE_MAX_PLAN_EUR),

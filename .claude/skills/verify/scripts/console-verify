@@ -39,6 +39,20 @@ case "${1:-}" in
   drive)
     port="$(cat "$state/port")"
     node "$here/drive.mjs" "http://127.0.0.1:$port" "$state/evidence"
+    node "$here/states.mjs" "$state/evidence"
+    ;;
+  live)
+    # A fresh app on live data, so its first Projects request makes a fresh read.
+    mkdir -p "$state"
+    port="$(free_port)"
+    CONSOLE_DATA=live NODE_USE_ENV_PROXY=1 PORT="$port" setsid pnpm start > "$state/live-server.log" 2>&1 &
+    pid=$!
+    trap 'kill -- -"$pid" 2>/dev/null || true' EXIT
+    for _ in $(seq 1 60); do
+      [[ "$(curl -fsS "http://127.0.0.1:$port/api/health" 2>/dev/null)" == ok ]] && break
+      sleep 1
+    done
+    NODE_USE_ENV_PROXY=1 node "$here/live.mjs" "http://127.0.0.1:$port" "$state/evidence"
     ;;
   cleanup)
     if [[ -f "$state/pid" ]]; then
@@ -48,7 +62,7 @@ case "${1:-}" in
     echo "stopped run $run"
     ;;
   *)
-    echo "usage: console-verify launch|drive|cleanup" >&2
+    echo "usage: console-verify launch|drive|live|cleanup" >&2
     exit 2
     ;;
 esac
