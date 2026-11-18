@@ -13,7 +13,11 @@ export default defineConfig({
     command: "pnpm start",
     url: `http://localhost:${port}/api/health`,
     reuseExistingServer: true,
-    env: { CONSOLE_DATA: "fixtures", PORT: String(port) },
+    env: {
+      CONSOLE_DATA: "fixtures",
+      CONSOLE_NOW: "2026-11-22T12:00:00Z",
+      PORT: String(port),
+    },
     timeout: 60_000,
   },
 });
