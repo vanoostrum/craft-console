@@ -2,15 +2,15 @@
 
 The craft plugin reads these values. Its rules are in the `craft:rules` skill.
 
-| Key | Value |
-|---|---|
-| Linear team | `CRAFT` |
-| Linear project | `Craft Console` |
-| GitHub repo | `vanoostrum/craft-console` |
-| Base branch | `main` |
-| Required CI checks | none yet |
-| Verify skill | none yet |
-| App driver skill | none yet |
+| Key                | Value                      |
+| ------------------ | -------------------------- |
+| Linear team        | `CRAFT`                    |
+| Linear project     | `Craft Console`            |
+| GitHub repo        | `vanoostrum/craft-console` |
+| Base branch        | `main`                     |
+| Required CI checks | `checks`, `e2e`            |
+| Verify skill       | `project-verify`           |
+| App driver skill   | `verify`                   |
 
 ## Standing notes
 

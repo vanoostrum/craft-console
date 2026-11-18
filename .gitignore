@@ -1,0 +1,14 @@
+node_modules/
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+screenshots/
+*.tsbuildinfo
+next-env.d.ts
+.env*
+.vercel
+.verify/
+# Written by `next dev`; not part of this repository.
+AGENTS.md

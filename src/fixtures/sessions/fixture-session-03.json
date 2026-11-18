@@ -1,0 +1,41 @@
+{
+  "repo": "vanoostrum/nap-time",
+  "branch": "nap-103/feature-3",
+  "session_id": "fixture-session-03",
+  "tickets": ["NAP-103"],
+  "segments": [
+    {
+      "step": "craft:build",
+      "ticket": "NAP-103",
+      "started_at": "2026-11-03T09:05:00.000Z",
+      "ended_at": "2026-11-03T09:50:00.000Z",
+      "tokens": {
+        "claude-sonnet-x": {
+          "input_tokens": 300,
+          "output_tokens": 150,
+          "cache_creation_input_tokens": 2000,
+          "cache_read_input_tokens": 30000
+        }
+      },
+      "subagents": []
+    },
+    {
+      "step": "craft:review",
+      "ticket": "NAP-103",
+      "started_at": "2026-11-03T10:05:00.000Z",
+      "ended_at": "2026-11-03T10:50:00.000Z",
+      "tokens": {
+        "claude-sonnet-x": {
+          "input_tokens": 300,
+          "output_tokens": 150,
+          "cache_creation_input_tokens": 2000,
+          "cache_read_input_tokens": 30000
+        }
+      },
+      "subagents": []
+    }
+  ],
+  "event": "Stop",
+  "uploaded_at": "2026-11-03T11:00:00.103702+00:00",
+  "moved_from": "old-bucket/NAP-103"
+}

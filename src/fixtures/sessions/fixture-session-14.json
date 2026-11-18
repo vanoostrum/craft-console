@@ -1,0 +1,40 @@
+{
+  "repo": "vanoostrum/nap-time",
+  "branch": "nap-999/typo",
+  "session_id": "fixture-session-14",
+  "tickets": ["NAP-999"],
+  "segments": [
+    {
+      "step": null,
+      "ticket": "NAP-999",
+      "started_at": null,
+      "ended_at": "2026-11-15T09:01:00.000Z",
+      "tokens": {
+        "claude-sonnet-x": {
+          "input_tokens": 140,
+          "output_tokens": 70,
+          "cache_creation_input_tokens": 100,
+          "cache_read_input_tokens": 1000
+        }
+      },
+      "subagents": []
+    },
+    {
+      "step": "craft:build",
+      "ticket": "NAP-999",
+      "started_at": "2026-11-15T09:05:00.000Z",
+      "ended_at": "2026-11-15T09:50:00.000Z",
+      "tokens": {
+        "claude-sonnet-x": {
+          "input_tokens": 1400,
+          "output_tokens": 700,
+          "cache_creation_input_tokens": 2000,
+          "cache_read_input_tokens": 30000
+        }
+      },
+      "subagents": []
+    }
+  ],
+  "event": "SessionEnd",
+  "uploaded_at": "2026-11-15T10:00:00.117276+00:00"
+}

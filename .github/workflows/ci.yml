@@ -1,0 +1,76 @@
+name: CI
+
+"on":
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: ESLint
+        run: pnpm lint
+      - name: Prettier
+        run: pnpm format:check
+      - name: Type check
+        run: pnpm typecheck
+      - name: Vitest
+        run: pnpm test
+      - name: Build
+        run: pnpm build
+
+  e2e:
+    name: e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CONSOLE_DATA: fixtures
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Build
+        run: pnpm build
+      - name: Start
+        run: |
+          pnpm start > server.log 2>&1 &
+          for _ in $(seq 1 30); do
+            curl -fsS http://localhost:3000/api/health && exit 0
+            sleep 2
+          done
+          cat server.log
+          exit 1
+      - name: Playwright
+        run: pnpm e2e
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: screenshots/
+          if-no-files-found: error
