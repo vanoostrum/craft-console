@@ -233,9 +233,7 @@ tr.unknown td { color: var(--muted); }
 .mix .w99 { width: 99%; }
 .mix .w100 { width: 100%; }
 
-/* Read time and notices (CRAFT-63) */
-.panel-head .title { display: flex; flex-direction: column; gap: 2px; }
-.read-at { color: var(--faint); font-family: var(--mono); font-size: 12px; }
+/* Notices (CRAFT-63) */
 .notice { margin: 0; padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--raised); color: var(--text); border-left: 3px solid var(--waiting); }
 .notice ul { margin: 6px 0 0; padding-left: 18px; font-family: var(--mono); font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
 .notice.error { border-left-color: var(--error); border-bottom: 0; }
