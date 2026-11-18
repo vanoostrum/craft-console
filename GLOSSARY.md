@@ -77,3 +77,11 @@ An estimate of the real money per project: the monthly price of the owner's Max 
 
 **Shade by**:
 The switch between cost and craft time for the grid shading and the phase bars.
+
+**Unreadable session file**:
+A `metadata.json` in the transcript bucket that is not valid JSON or does not have the session shape. The Projects page does not count it, and lists it in a notice.
+_Avoid_: Broken session, bad file
+
+**Read time**:
+When the app last read the data source. The page shows it as "Read at", because the app keeps a read for 5 minutes.
+_Avoid_: Last updated, refreshed at
