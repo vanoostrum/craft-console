@@ -22,7 +22,7 @@ case "${1:-}" in
     pnpm build
     port="${CONSOLE_VERIFY_PORT:-$(free_port)}"
     echo "$port" > "$state/port"
-    CONSOLE_DATA=fixtures PORT="$port" setsid pnpm start > "$state/server.log" 2>&1 &
+    CONSOLE_DATA=fixtures CONSOLE_NOW=2026-11-22T12:00:00Z PORT="$port" setsid pnpm start > "$state/server.log" 2>&1 &
     echo $! > "$state/pid"
     for _ in $(seq 1 60); do
       if [[ "$(curl -fsS "http://127.0.0.1:$port/api/health" 2>/dev/null)" == ok ]]; then
