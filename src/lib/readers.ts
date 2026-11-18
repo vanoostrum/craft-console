@@ -18,8 +18,12 @@ export const Ticket = z.object({
     "canceled",
   ]),
   project: z.string().nullable(),
+  /** The URL of its Linear project. */
+  projectUrl: z.string().nullable(),
   milestone: z.string().nullable(),
   parent: z.string().nullable(),
+  /** For a plan ticket: the URL of the brief its description links (`briefOf`). */
+  brief: z.string().nullable(),
 });
 
 export type Ticket = z.infer<typeof Ticket>;

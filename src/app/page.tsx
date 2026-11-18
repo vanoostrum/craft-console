@@ -5,8 +5,10 @@ import { PHASES, type Phase } from "@/lib/cost";
 import { selectReaders } from "@/lib/data-source";
 import { formatDuration, formatEuro, formatPlanPrice } from "@/lib/format";
 import { MAX_SHARE_TIME_ZONE, maxShare } from "@/lib/max-share";
-import { projects, ticketKeys, type PhaseValues } from "@/lib/projects";
+import { readConsole } from "@/lib/console-read";
+import { projectPath, projects, type PhaseValues } from "@/lib/projects";
 import { shadeBy, type ShadeBy } from "@/lib/shade";
+import { ShadeSwitch, withShade } from "./shade-switch";
 import { TopBar } from "./top-bar";
 
 export const dynamic = "force-dynamic";
@@ -26,27 +28,6 @@ const monthName = (now: Date, month: "short" | "long") =>
     month,
     timeZone: MAX_SHARE_TIME_ZONE,
   }).format(now);
-
-function ShadeSwitch({ current }: { current: ShadeBy }) {
-  return (
-    <>
-      <span className="label" id="shade-label">
-        Shade by
-      </span>
-      <div className="toggle" role="group" aria-labelledby="shade-label">
-        <Link href="/" aria-current={current === "cost" ? "true" : undefined}>
-          € cost
-        </Link>
-        <Link
-          href="/?shade=time"
-          aria-current={current === "time" ? "true" : undefined}
-        >
-          craft time
-        </Link>
-      </div>
-    </>
-  );
-}
 
 function PhaseMix({ values, shade }: { values: PhaseValues; shade: ShadeBy }) {
   const total = PHASES.reduce((sum, phase) => sum + values[phase], 0);
@@ -89,16 +70,15 @@ export default async function ProjectsPage({
   const shade = shadeBy((await searchParams).shade);
   const settings = consoleSettings(process.env);
   const readers = selectReaders(process.env.CONSOLE_DATA);
-  const sessions = await readers.sessions.sessions();
-  const found = await readers.tickets.tickets(ticketKeys(sessions));
-  const rows = projects(sessions, found, settings.now);
+  const { sessions, tickets } = await readConsole(readers);
+  const rows = projects(sessions, tickets, settings.now);
   const shares = maxShare(rows, settings.maxPlanEur);
   const missing = [...new Set(rows.flatMap((row) => row.missingModels))].sort();
   const label = SHADE_LABEL[shade];
 
   return (
     <>
-      <TopBar current="/" tools={<ShadeSwitch current={shade} />} />
+      <TopBar current="/" tools={<ShadeSwitch path="/" current={shade} />} />
       <main>
         <section className="panel" aria-labelledby="projects-title">
           <div className="panel-head">
@@ -139,7 +119,11 @@ export default async function ProjectsPage({
                     data-sessions={row.sessions}
                   >
                     <td className="name">
-                      {row.name}
+                      <Link
+                        href={withShade(projectPath(row.repository), shade)}
+                      >
+                        {row.name}
+                      </Link>
                       {row.repository !== null && (
                         <>
                           {/* A break point, so a long name can wrap on a phone. */}

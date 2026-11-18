@@ -6,6 +6,7 @@
   --control: #1c2028;
   --border: #262a33;
   --border-strong: #2e333d;
+  --divider: #1f232b;
   --text: #e6e8ec;
   --strong: #ffffff;
   --muted: #a3a9b6;
@@ -267,6 +268,158 @@ td.est {
   color: var(--faint);
   border-top: 1px solid var(--border);
   font-size: 12px;
+}
+
+/* Overview: the project name links to the project page. */
+td.name a {
+  color: var(--strong);
+}
+td.name a:hover {
+  color: var(--accent);
+}
+
+/* Project page: crumbs and tiles */
+.crumbs {
+  color: var(--muted);
+}
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.tile {
+  flex: 1 1 160px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: var(--surface);
+}
+.tile .k {
+  color: var(--muted);
+}
+.tile .v {
+  font-family: var(--mono);
+  font-size: 20px;
+  color: var(--strong);
+  margin-top: 4px;
+}
+.tile .v.wait {
+  color: var(--waiting);
+}
+.tile .v.est {
+  color: var(--text);
+}
+.tile small {
+  display: block;
+  color: var(--faint);
+  margin-top: 4px;
+}
+
+/* Tickets × phases grid */
+table.grid {
+  font-family: var(--mono);
+  font-size: 12px;
+  min-width: 1200px;
+}
+.grid th {
+  text-align: right;
+  padding: 8px 10px;
+}
+.grid th:first-child {
+  text-align: left;
+}
+.grid td {
+  padding: 6px 10px;
+  border-top: 1px solid var(--divider);
+  text-align: right;
+  vertical-align: top;
+}
+.grid td:first-child {
+  text-align: left;
+  font-family: var(--sans);
+  font-size: 13px;
+  white-space: nowrap;
+}
+.grid .sep {
+  border-left: 1px solid var(--border);
+}
+.grid td.tot {
+  color: var(--strong);
+  font-weight: 500;
+}
+.grid .cell div + div {
+  color: #b7bcc7;
+  font-size: 11px;
+  margin-top: 2px;
+}
+.grid .empty {
+  color: var(--phase-other);
+}
+.grid .key {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent);
+  margin-right: 8px;
+}
+.grid .state {
+  color: var(--faint);
+  font-size: 12px;
+  margin-left: 6px;
+}
+.grid tr.group td {
+  background: var(--raised);
+  border-top: 1px solid var(--border);
+  font-weight: 500;
+}
+.grid tr.group td:first-child {
+  font-weight: 600;
+}
+.grid tr.milestone td:first-child,
+.grid tr.in-plan td:first-child {
+  padding-left: 34px;
+}
+.grid tr.in-milestone td:first-child {
+  padding-left: 54px;
+}
+.grid tr.total td {
+  border-top: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--strong);
+  font-weight: 500;
+}
+.grid tr[hidden] {
+  display: none;
+}
+.fold {
+  font: inherit;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0 6px 0 0;
+  width: 20px;
+  text-align: left;
+}
+.fold[aria-expanded="false"]::before {
+  content: "▸";
+}
+.fold[aria-expanded="true"]::before {
+  content: "▾";
+}
+.c1 {
+  background: rgba(76, 141, 255, 0.14);
+}
+.c2 {
+  background: rgba(76, 141, 255, 0.28);
+}
+.c3 {
+  background: rgba(76, 141, 255, 0.45);
+}
+.c4 {
+  background: rgba(76, 141, 255, 0.65);
+}
+.c5 {
+  background: rgba(76, 141, 255, 0.85);
 }
 
 @media (max-width: 600px) {

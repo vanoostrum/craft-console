@@ -44,16 +44,16 @@ const ROWS = [
   {
     name: "NapTime",
     repo: "vanoostrum/nap-time",
-    sessions: "15",
-    cells: ["12", "€41.18 *", "€3.43", "5h22m", "27m", "64h", "≈ €61"],
-    cost: "plan 8%, spec 34%, design 4%, build 14%, review 24%, merge 3%, other 13%",
-    time: "plan 6%, spec 30%, design 4%, build 25%, review 26%, merge 2%, other 8%",
+    sessions: "16",
+    cells: ["13", "€47.43 *", "€3.65", "5h42m", "26m", "66h", "≈ €66"],
+    cost: "plan 14%, spec 32%, design 4%, build 12%, review 20%, merge 3%, other 15%",
+    time: "plan 10%, spec 28%, design 4%, build 23%, review 25%, merge 1%, other 9%",
   },
   {
     name: "Craft",
     repo: "vanoostrum/craft",
     sessions: "4",
-    cells: ["3", "€12.37", "€4.12", "—", "—", "—", "≈ €21"],
+    cells: ["3", "€12.37", "€4.12", "—", "—", "—", "≈ €20"],
     cost: "spec 69%, build 11%, review 20%",
     time: "no craft time",
   },
@@ -85,7 +85,7 @@ const ROWS = [
     name: "No repository",
     repo: null,
     sessions: "2",
-    cells: ["0", "€5.51", "—", "18m", "—", "3h20m", "≈ €9"],
+    cells: ["0", "€3.72", "—", "13m", "—", "2h20m", "≈ €6"],
     cost: "other 100%",
     time: "other 100%",
   },
@@ -174,7 +174,7 @@ test.describe("Projects", () => {
       await expect(name.locator(".repo")).toHaveCount(row.repo ? 1 : 0);
       if (row.repo) await expect(name.locator(".repo")).toHaveText(row.repo);
       await expect(name).toHaveText(row.name + (row.repo ?? ""));
-      await expect(name.locator("a")).toHaveCount(0);
+      await expect(name.locator("a")).toHaveText(row.name);
       await expect(tr).toHaveAttribute("data-sessions", row.sessions);
     }
   });

@@ -5,8 +5,10 @@
     "state": "Done",
     "stateType": "completed",
     "project": "NapTime",
-    "milestone": "Fixture milestone",
-    "parent": "NAP-100"
+    "projectUrl": "https://linear.app/example/project/sample",
+    "milestone": "Sample app v1: Record",
+    "parent": "NAP-100",
+    "description": "A synthetic fixture ticket: Nap feature 1."
   },
   {
     "key": "NAP-102",
@@ -14,8 +16,10 @@
     "state": "Building",
     "stateType": "started",
     "project": "NapTime",
-    "milestone": "Fixture milestone",
-    "parent": "NAP-100"
+    "projectUrl": "https://linear.app/example/project/sample",
+    "milestone": "Sample app v1: Record",
+    "parent": "NAP-100",
+    "description": "A synthetic fixture ticket: Nap feature 2."
   },
   {
     "key": "NAP-103",
@@ -23,8 +27,10 @@
     "state": "Specifying",
     "stateType": "started",
     "project": "NapTime",
-    "milestone": "Fixture milestone",
-    "parent": "NAP-100"
+    "projectUrl": "https://linear.app/example/project/sample",
+    "milestone": "Sample app v1: Record",
+    "parent": "NAP-100",
+    "description": "A synthetic fixture ticket: Nap feature 3."
   },
   {
     "key": "NAP-104",
@@ -32,8 +38,10 @@
     "state": "Todo",
     "stateType": "unstarted",
     "project": "NapTime",
-    "milestone": "Fixture milestone",
-    "parent": "NAP-100"
+    "projectUrl": "https://linear.app/example/project/sample",
+    "milestone": "Sample app v1: Reports",
+    "parent": "NAP-100",
+    "description": "A synthetic fixture ticket: Nap feature 4."
   },
   {
     "key": "NAP-105",
@@ -41,8 +49,10 @@
     "state": "Done",
     "stateType": "completed",
     "project": "NapTime",
-    "milestone": "Fixture milestone",
-    "parent": "NAP-100"
+    "projectUrl": "https://linear.app/example/project/sample",
+    "milestone": "Sample app v1: Reports",
+    "parent": "NAP-100",
+    "description": "A synthetic fixture ticket: Nap feature 5."
   },
   {
     "key": "NAP-106",
@@ -50,8 +60,10 @@
     "state": "Building",
     "stateType": "started",
     "project": "NapTime",
-    "milestone": "Fixture milestone",
-    "parent": "NAP-100"
+    "projectUrl": "https://linear.app/example/project/sample",
+    "milestone": "Sample app v1: Reports",
+    "parent": "NAP-100",
+    "description": "A synthetic fixture ticket: Nap feature 6."
   },
   {
     "key": "NAP-107",
@@ -59,8 +71,10 @@
     "state": "Specifying",
     "stateType": "started",
     "project": "NapTime",
+    "projectUrl": "https://linear.app/example/project/sample",
     "milestone": null,
-    "parent": "NAP-100"
+    "parent": "NAP-100",
+    "description": "A synthetic fixture ticket: Nap feature 7."
   },
   {
     "key": "NAP-108",
@@ -68,8 +82,10 @@
     "state": "Todo",
     "stateType": "unstarted",
     "project": "NapTime",
+    "projectUrl": "https://linear.app/example/project/sample",
     "milestone": null,
-    "parent": "NAP-100"
+    "parent": "NAP-100",
+    "description": "A synthetic fixture ticket: Nap feature 8."
   },
   {
     "key": "NAP-109",
@@ -77,8 +93,10 @@
     "state": "Done",
     "stateType": "completed",
     "project": "NapTime",
-    "milestone": null,
-    "parent": "NAP-100"
+    "projectUrl": "https://linear.app/example/project/sample",
+    "milestone": "Sample tooling: Setup",
+    "parent": "NAP-200",
+    "description": "A synthetic fixture ticket: Nap feature 9."
   },
   {
     "key": "NAP-110",
@@ -86,8 +104,10 @@
     "state": "Building",
     "stateType": "started",
     "project": "NapTime",
-    "milestone": null,
-    "parent": "NAP-100"
+    "projectUrl": "https://linear.app/example/project/sample",
+    "milestone": "Sample tooling: Setup",
+    "parent": "NAP-200",
+    "description": "A synthetic fixture ticket: Nap feature 10."
   },
   {
     "key": "NAP-111",
@@ -95,8 +115,10 @@
     "state": "Specifying",
     "stateType": "started",
     "project": "NapTime",
+    "projectUrl": "https://linear.app/example/project/sample",
     "milestone": null,
-    "parent": "NAP-100"
+    "parent": null,
+    "description": "A single ticket that links a brief, but is not a plan ticket: [Brief: Sample setup](https://linear.app/example/document/brief-sample-setup-0d4e5f6a7b8c)."
   },
   {
     "key": "NAP-112",
@@ -104,8 +126,10 @@
     "state": "Todo",
     "stateType": "unstarted",
     "project": "NapTime",
+    "projectUrl": "https://linear.app/example/project/sample",
     "milestone": null,
-    "parent": "NAP-100"
+    "parent": "NAP-111",
+    "description": "A synthetic fixture ticket: Nap feature 12."
   },
   {
     "key": "CRAFT-901",
@@ -113,8 +137,10 @@
     "state": "Done",
     "stateType": "completed",
     "project": "Craft",
+    "projectUrl": "https://linear.app/example/project/sample-craft",
     "milestone": null,
-    "parent": null
+    "parent": null,
+    "description": "A synthetic fixture ticket: Fixture plan step."
   },
   {
     "key": "CRAFT-902",
@@ -122,8 +148,10 @@
     "state": "Done",
     "stateType": "completed",
     "project": "Craft",
+    "projectUrl": "https://linear.app/example/project/sample-craft",
     "milestone": null,
-    "parent": null
+    "parent": null,
+    "description": "A synthetic fixture ticket: Fixture spec step."
   },
   {
     "key": "CRAFT-903",
@@ -131,17 +159,21 @@
     "state": "Done",
     "stateType": "completed",
     "project": "Craft",
+    "projectUrl": "https://linear.app/example/project/sample-craft",
     "milestone": null,
-    "parent": null
+    "parent": null,
+    "description": "A synthetic fixture ticket: Fixture build step."
   },
   {
     "key": "NAP-100",
-    "title": "Plan: nap features",
+    "title": "Plan: Sample app v1",
     "state": "Done",
     "stateType": "completed",
     "project": "NapTime",
+    "projectUrl": "https://linear.app/example/project/sample",
     "milestone": null,
-    "parent": null
+    "parent": null,
+    "description": "The plan of the sample app.\n\nBrief: [Brief: Sample app v1](<https://linear.app/example/document/brief-sample-app-v1-6c0a3f19e2b4>)."
   },
   {
     "key": "WEB-1",
@@ -149,8 +181,10 @@
     "state": "Done",
     "stateType": "completed",
     "project": "Web",
+    "projectUrl": "https://linear.app/example/project/sample-web",
     "milestone": null,
-    "parent": null
+    "parent": null,
+    "description": "A synthetic fixture ticket: Web feature 1."
   },
   {
     "key": "NAP-120",
@@ -158,8 +192,10 @@
     "state": "Done",
     "stateType": "completed",
     "project": "NapTime",
+    "projectUrl": "https://linear.app/example/project/sample",
     "milestone": null,
-    "parent": null
+    "parent": null,
+    "description": "A synthetic fixture ticket: Nap feature 20."
   },
   {
     "key": "NAP-121",
@@ -167,8 +203,10 @@
     "state": "Building",
     "stateType": "started",
     "project": "NapTime",
+    "projectUrl": "https://linear.app/example/project/sample",
     "milestone": null,
-    "parent": null
+    "parent": null,
+    "description": "A synthetic fixture ticket: Nap feature 21."
   },
   {
     "key": "SBX-1",
@@ -176,7 +214,20 @@
     "state": "Todo",
     "stateType": "unstarted",
     "project": null,
+    "projectUrl": null,
     "milestone": null,
-    "parent": null
+    "parent": null,
+    "description": "A synthetic fixture ticket: Sandbox feature 1."
+  },
+  {
+    "key": "NAP-200",
+    "title": "Plan: Sample tooling",
+    "state": "Done",
+    "stateType": "completed",
+    "project": "NapTime",
+    "projectUrl": "https://linear.app/example/project/sample",
+    "milestone": null,
+    "parent": null,
+    "description": "The plan of the sample tooling, with no brief."
   }
 ]

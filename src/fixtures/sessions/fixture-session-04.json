@@ -31,7 +31,7 @@
       "tokens": {
         "claude-opus-5-5": {
           "input_tokens": 3031,
-          "output_tokens": 30100,
+          "output_tokens": 90100,
           "cache_creation_input_tokens": 211000,
           "cache_read_input_tokens": 3010000
         }
