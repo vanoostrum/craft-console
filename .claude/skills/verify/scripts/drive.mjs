@@ -27,6 +27,30 @@ const PAGES = [
     shade: "time",
   },
   {
+    feature: "project",
+    path: "/projects/vanoostrum/nap-time",
+    gallery: "design/pages/project/default.html",
+    project: "vanoostrum/nap-time",
+  },
+  {
+    feature: "project-time",
+    path: "/projects/vanoostrum/nap-time?shade=time",
+    gallery: "design/pages/project/time.html",
+    project: "vanoostrum/nap-time",
+  },
+  {
+    feature: "project-no-repository",
+    path: "/projects/no-repo",
+    gallery: "design/pages/project/no-repository.html",
+    project: "no-repo",
+  },
+  {
+    feature: "project-not-found",
+    path: "/projects/vanoostrum/unknown",
+    gallery: "design/pages/project/not-found.html",
+    status: 404,
+  },
+  {
     feature: "craft-versions",
     path: "/versions",
     gallery: "design/pages/craft-versions/default.html",
@@ -95,24 +119,46 @@ function expectedRows() {
     }
     return usd * EUR_PER_USD;
   };
+  // The brief move: a segment whose brief has the document id of a plan
+  // ticket's brief link counts in the repository where the plan ticket's
+  // segments ran (the fixtures always have them).
+  const docId = (url) =>
+    /\/document\/(?:.*-)?([0-9a-f]+)(?:[/?#]|$)/.exec(url)?.[1];
+  const planOfBrief = new Map();
+  for (const t of known.values()) {
+    const link = /\[Brief: [^\]]*\]\(<?([^)>]+)>?\)/.exec(t.description ?? "");
+    if (t.title.startsWith("Plan: ") && link) {
+      const repos = sessions
+        .filter((s) => s.segments.some((seg) => seg.ticket === t.key))
+        .map((s) => s.repo);
+      if (repos.length) planOfBrief.set(docId(link[1]), repos.sort()[0]);
+    }
+  }
+  const repoOf = (s, seg) =>
+    (seg.brief && planOfBrief.get(docId(seg.brief))) || s.repo;
+  const blank = (repo) => ({
+    repo,
+    sessions: 0,
+    keys: new Set(),
+    cost: 0,
+    month: 0,
+    missing: new Set(),
+    work: 0,
+    wait: 0,
+    timed: false,
+    phaseCost: Object.fromEntries(PHASES.map((p) => [p, 0])),
+    phaseWork: Object.fromEntries(PHASES.map((p) => [p, 0])),
+  });
   const groups = new Map();
   for (const s of sessions) {
-    const g = groups.get(s.repo) ?? {
-      repo: s.repo,
-      sessions: 0,
-      keys: new Set(),
-      cost: 0,
-      month: 0,
-      missing: new Set(),
-      work: 0,
-      wait: 0,
-      timed: false,
-      phaseCost: Object.fromEntries(PHASES.map((p) => [p, 0])),
-      phaseWork: Object.fromEntries(PHASES.map((p) => [p, 0])),
-    };
-    g.sessions += 1;
-    s.tickets.filter((k) => known.has(k)).forEach((k) => g.keys.add(k));
+    const own = groups.get(s.repo) ?? blank(s.repo);
+    own.sessions += 1;
+    s.tickets.filter((k) => known.has(k)).forEach((k) => own.keys.add(k));
+    groups.set(s.repo, own);
+  }
+  for (const s of sessions) {
     for (const seg of s.segments) {
+      const g = groups.get(repoOf(s, seg));
       let c = price(seg.tokens, g.missing);
       for (const sub of seg.subagents) c += price(sub.tokens, g.missing);
       g.cost += c;
@@ -127,7 +173,6 @@ function expectedRows() {
       g.wait += seg.wait_seconds ?? 0;
       g.phaseWork[phase(seg.step)] += seg.work_seconds ?? 0;
     }
-    groups.set(s.repo, g);
   }
   const nameOf = (g) => {
     if (g.repo === "no-repo") return "No repository";
@@ -180,6 +225,7 @@ function expectedRows() {
           : "—",
         "",
       ],
+      repo: g.repo,
       sessions: String(g.sessions),
       cost: title(g.phaseCost, "no cost"),
       time: title(g.phaseWork, "no craft time"),
@@ -218,7 +264,7 @@ try {
       const tab = await browser.newPage({ viewport });
       const response = await tab.goto(base + page.path);
       log.push(`GET ${page.path} (${platform}) -> ${response.status()}`);
-      if (response.status() !== 200)
+      if (response.status() !== (page.status ?? 200))
         failures.push(`${page.path} answered ${response.status()}`);
       const current = await tab
         .locator('nav[aria-label="Main"] [aria-current="page"]')
@@ -270,6 +316,80 @@ try {
           failures.push(`${page.path} has the wrong Shade by link current`);
         const notes = await tab.locator("p.note").allTextContents();
         log.push(`notes: ${JSON.stringify(notes)}`);
+      }
+      if (page.project) {
+        const rows = await tab
+          .locator("tbody tr")
+          .evaluateAll((trs) =>
+            trs.map((tr) =>
+              [...tr.querySelectorAll("td")].map((td) =>
+                td.innerText.replace(/\s+/g, " ").trim(),
+              ),
+            ),
+          );
+        log.push(`grid rows: ${JSON.stringify(rows.map((r) => r[0]))}`);
+        const tiles = await tab.locator(".tile .v").allTextContents();
+        log.push(`tiles: ${JSON.stringify(tiles)}`);
+        const row = expectedRows().find((r) => r.repo === page.project);
+        const total = rows.at(-1);
+        const want = [
+          row.cells[2].replace(" *", ""),
+          row.cells[4],
+          row.cells[6],
+        ];
+        log.push(
+          `Total: ${JSON.stringify(total.slice(8))}, overview row: ${JSON.stringify(want)}`,
+        );
+        if (
+          total[0] !== "Total" ||
+          JSON.stringify(total.slice(8)) !== JSON.stringify(want)
+        )
+          failures.push(
+            `${page.path} Total differs from its overview row on ${platform}`,
+          );
+        if (
+          JSON.stringify(tiles) !==
+          JSON.stringify([
+            row.cells[2],
+            row.cells[4],
+            row.cells[6],
+            row.cells[7],
+          ])
+        )
+          failures.push(
+            `${page.path} tiles differ from its overview row on ${platform}`,
+          );
+        if (page.project === "vanoostrum/nap-time") {
+          const order = rows.map(
+            (r) => /^[A-Z]+-\d+/.exec(r[0])?.[0] ?? r[0].split(" ")[0],
+          );
+          const ORDER = [
+            "Plan:",
+            "NAP-100",
+            "NAP-107",
+            "NAP-108",
+            "Sample",
+            "NAP-104",
+            "NAP-105",
+            "NAP-106",
+            "Sample",
+            "NAP-101",
+            "NAP-102",
+            "NAP-103",
+            "Plan:",
+            "NAP-109",
+            "NAP-110",
+            "Single",
+            "NAP-111",
+            "NAP-112",
+            "No",
+            "Total",
+          ];
+          if (JSON.stringify(order) !== JSON.stringify(ORDER))
+            failures.push(
+              `${page.path} rows are not in the grouping order on ${platform}`,
+            );
+        }
       }
       await tab.screenshot({
         path: join(dir, `app_${page.feature}_${platform}.png`),

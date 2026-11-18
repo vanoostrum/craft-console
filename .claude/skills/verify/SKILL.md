@@ -18,7 +18,7 @@ $V cleanup   # stop the app
 ```
 
 - `launch` prints `ready: <url> run=<id>`, or the server log and a non-zero exit when `/api/health` does not answer `ok` in 60 seconds. Set `CONSOLE_VERIFY_PORT` to pick the port. State and logs go to `.verify/<run id>/`, which git ignores.
-- `drive` prints a transcript per page and ends with `PASS` or `FAIL` and the reasons. It fails when a page does not answer 200, when a page scrolls sideways, or when the Projects rows differ from the totals it computes from `src/fixtures/`.
+- `drive` prints a transcript per page and ends with `PASS` or `FAIL` and the reasons. It fails when a page does not answer 200 (404 for the not-found page), when a page scrolls sideways, when the Projects rows differ from the totals it computes from `src/fixtures/`, or when a project page's Total and tiles differ from its overview row.
 - Evidence goes to `.verify/<run id>/evidence/<feature>/`: `transcript.txt`, and for each platform in `design/README.md` (desktop 1280×800, mobile 390×844) `app_<feature>_<platform>.png` and `gallery_<feature>_<platform>.png`. Compare each app screenshot with its gallery screenshot.
 - The gallery pages name IBM Plex but do not load it. `drive` loads the app's own Plex font files into each gallery page before its screenshot, so a font missing on the machine does not show up as a difference.
 - Chromium comes from `@playwright/test` 1.63.0, the version in the cloud image.
@@ -27,13 +27,12 @@ $V cleanup   # stop the app
 
 One file per entry point in `features/`, with its recipe:
 
-| Feature                         | File                         | State                                    |
-| ------------------------------- | ---------------------------- | ---------------------------------------- |
-| Projects `/` and `/?shade=time` | `features/projects.md`       | driven                                   |
-| Craft versions `/versions`      | `features/craft-versions.md` | driven                                   |
-| Health `/api/health`            | `features/health.md`         | driven by `launch`                       |
-| Project page                    | —                            | added by the ticket that builds the page |
-| "Shade by" on the project page  | —                            | added by the ticket that builds the page |
-| A level folded open             | —                            | added by the ticket that builds the page |
+| Feature                         | File                         | State              |
+| ------------------------------- | ---------------------------- | ------------------ |
+| Projects `/` and `/?shade=time` | `features/projects.md`       | driven             |
+| Project page, with Shade by     | `features/project.md`        | driven             |
+| A level folded open             | `features/project.md`        | by hand, and e2e   |
+| Craft versions `/versions`      | `features/craft-versions.md` | driven             |
+| Health `/api/health`            | `features/health.md`         | driven by `launch` |
 
 The live step (open Projects once on `CONSOLE_DATA=live`) comes with the Live data ticket (CRAFT-63).
