@@ -10,6 +10,7 @@
   --strong: #ffffff;
   --muted: #a3a9b6;
   --faint: #8b92a0;
+  --error: #ff7b72;
   --accent: #7fb0ff;
   --accent-hover: #a9c9ff;
   --waiting: #f3c46b;
@@ -267,6 +268,47 @@ td.est {
   color: var(--faint);
   border-top: 1px solid var(--border);
   font-size: 12px;
+}
+
+/* Read time and notices (CRAFT-63) */
+.panel-head .title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.read-at {
+  color: var(--faint);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+.notice {
+  margin: 0;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--raised);
+  color: var(--text);
+  border-left: 3px solid var(--waiting);
+}
+.notice ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.notice.error {
+  border-left-color: var(--error);
+  border-bottom: 0;
+}
+.notice.error strong {
+  color: var(--error);
+}
+td.empty {
+  font-family: var(--sans);
+  color: var(--muted);
+  text-align: left;
+  padding: 24px 14px;
 }
 
 @media (max-width: 600px) {

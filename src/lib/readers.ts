@@ -24,9 +24,18 @@ export const Ticket = z.object({
 
 export type Ticket = z.infer<typeof Ticket>;
 
+/**
+ * What a `SessionReader` reads: every session that parses, and the path of each
+ * session file that does not (an unreadable session file).
+ */
+export type SessionRead = {
+  sessions: SessionMetadata[];
+  unreadable: string[];
+};
+
 export interface SessionReader {
   /** All sessions in the data source. */
-  sessions(): Promise<SessionMetadata[]>;
+  sessions(): Promise<SessionRead>;
 }
 
 export interface TicketReader {

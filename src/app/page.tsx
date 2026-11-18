@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { consoleSettings } from "@/lib/console-data";
 import { PHASES, type Phase } from "@/lib/cost";
-import { selectReaders } from "@/lib/data-source";
+import { projectsRead } from "@/lib/data-source";
 import { formatDuration, formatEuro, formatPlanPrice } from "@/lib/format";
 import { MAX_SHARE_TIME_ZONE, maxShare } from "@/lib/max-share";
-import { projects, ticketKeys, type PhaseValues } from "@/lib/projects";
+import { projects, type PhaseValues } from "@/lib/projects";
+import { ReadError } from "@/lib/read-error";
+import { readAtLabel } from "@/lib/read-time";
 import { shadeBy, type ShadeBy } from "@/lib/shade";
 import { TopBar } from "./top-bar";
 
@@ -78,6 +80,11 @@ function PhaseMix({ values, shade }: { values: PhaseValues; shade: ShadeBy }) {
   );
 }
 
+const SOURCE_NAME = {
+  bucket: "the transcript bucket",
+  linear: "Linear",
+} as const;
+
 const time = (seconds: number | null) =>
   seconds === null ? "—" : formatDuration(seconds);
 
@@ -88,99 +95,150 @@ export default async function ProjectsPage({
 }) {
   const shade = shadeBy((await searchParams).shade);
   const settings = consoleSettings(process.env);
-  const readers = selectReaders(process.env.CONSOLE_DATA);
-  const sessions = await readers.sessions.sessions();
-  const found = await readers.tickets.tickets(ticketKeys(sessions));
-  const rows = projects(sessions, found, settings.now);
-  const shares = maxShare(rows, settings.maxPlanEur);
-  const missing = [...new Set(rows.flatMap((row) => row.missingModels))].sort();
   const label = SHADE_LABEL[shade];
-
-  return (
+  const heading = (
+    <h1 id="projects-title">
+      Projects{" "}
+      <span className="sub">
+        / cost at API list prices, craft working time · phase mix by {label}
+      </span>
+    </h1>
+  );
+  const bucketLink = (
+    <a className="primary" href={BUCKET_URL}>
+      Open the bucket
+    </a>
+  );
+  const page = (content: React.ReactNode) => (
     <>
       <TopBar current="/" tools={<ShadeSwitch current={shade} />} />
       <main>
         <section className="panel" aria-labelledby="projects-title">
-          <div className="panel-head">
-            <h1 id="projects-title">
-              Projects{" "}
-              <span className="sub">
-                / cost at API list prices, craft working time · phase mix by{" "}
-                {label}
-              </span>
-            </h1>
-            <a className="primary" href={BUCKET_URL}>
-              Open the bucket
-            </a>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>Project</th>
-                <th className="num">Tickets</th>
-                <th className="num">Cost</th>
-                <th className="num">Avg cost</th>
-                <th className="num">Craft time</th>
-                <th className="num">Avg time</th>
-                <th className="num">Waiting on you</th>
-                <th className="num">
-                  Max share · {monthName(settings.now, "short")}
-                </th>
-                <th className="mix-col">Phase mix · {label}</th>
+          {content}
+        </section>
+      </main>
+    </>
+  );
+
+  let read;
+  try {
+    read = await projectsRead();
+  } catch (error) {
+    if (!(error instanceof ReadError)) throw error;
+    return page(
+      <>
+        <div className="panel-head">
+          {heading}
+          {bucketLink}
+        </div>
+        <p className="notice error" role="alert">
+          <strong>Could not read {SOURCE_NAME[error.source]}:</strong>{" "}
+          {error.reason}. The page shows no numbers until the transcript bucket
+          and Linear can both be read.
+        </p>
+      </>,
+    );
+  }
+
+  const { sessions, unreadable, tickets } = read.value;
+  const rows = projects(sessions, tickets, settings.now);
+  const shares = maxShare(rows, settings.maxPlanEur);
+  const missing = [...new Set(rows.flatMap((row) => row.missingModels))].sort();
+
+  return page(
+    <>
+      <div className="panel-head">
+        <div className="title">
+          {heading}
+          <span className="read-at">{readAtLabel(read.readAt)}</span>
+        </div>
+        {bucketLink}
+      </div>
+      {unreadable.length > 0 && (
+        <div className="notice" role="status">
+          {unreadable.length === 1
+            ? "1 session file could not be read and is not counted:"
+            : `${unreadable.length} session files could not be read and are not counted:`}
+          <ul>
+            {unreadable.map((path) => (
+              <li key={path}>{path}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <table>
+        <thead>
+          <tr>
+            <th>Project</th>
+            <th className="num">Tickets</th>
+            <th className="num">Cost</th>
+            <th className="num">Avg cost</th>
+            <th className="num">Craft time</th>
+            <th className="num">Avg time</th>
+            <th className="num">Waiting on you</th>
+            <th className="num">
+              Max share · {monthName(settings.now, "short")}
+            </th>
+            <th className="mix-col">Phase mix · {label}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.length === 0 && (
+            <tr>
+              <td className="empty" colSpan={9}>
+                No sessions in the transcript bucket yet.
+              </td>
+            </tr>
+          )}
+          {rows.map((row, index) => {
+            const share = shares[index];
+            return (
+              <tr
+                key={row.repository ?? "no-repo"}
+                className={row.repository === null ? "no-repo" : undefined}
+                data-sessions={row.sessions}
+              >
+                <td className="name">
+                  {row.name}
+                  {row.repository !== null && (
+                    <>
+                      {/* A break point, so a long name can wrap on a phone. */}
+                      <wbr />
+                      <span className="repo">{row.repository}</span>
+                    </>
+                  )}
+                </td>
+                <td className="num">{row.tickets}</td>
+                <td className="num strong">
+                  {formatEuro(row.cost)}
+                  {row.missingModels.length > 0 && " *"}
+                </td>
+                <td className="num">
+                  {row.tickets > 0 ? formatEuro(row.cost / row.tickets) : "—"}
+                </td>
+                <td className="num strong">{time(row.workSeconds)}</td>
+                <td className="num">
+                  {row.workSeconds !== null && row.tickets > 0
+                    ? formatDuration(row.workSeconds / row.tickets)
+                    : "—"}
+                </td>
+                <td className="num wait">{time(row.waitSeconds)}</td>
+                <td className="num est">
+                  {share === null ? "—" : `≈ €${Math.round(share)}`}
+                </td>
+                <td>
+                  <PhaseMix
+                    values={shade === "cost" ? row.phaseCost : row.phaseWork}
+                    shade={shade}
+                  />
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, index) => {
-                const share = shares[index];
-                return (
-                  <tr
-                    key={row.repository ?? "no-repo"}
-                    className={row.repository === null ? "no-repo" : undefined}
-                    data-sessions={row.sessions}
-                  >
-                    <td className="name">
-                      {row.name}
-                      {row.repository !== null && (
-                        <>
-                          {/* A break point, so a long name can wrap on a phone. */}
-                          <wbr />
-                          <span className="repo">{row.repository}</span>
-                        </>
-                      )}
-                    </td>
-                    <td className="num">{row.tickets}</td>
-                    <td className="num strong">
-                      {formatEuro(row.cost)}
-                      {row.missingModels.length > 0 && " *"}
-                    </td>
-                    <td className="num">
-                      {row.tickets > 0
-                        ? formatEuro(row.cost / row.tickets)
-                        : "—"}
-                    </td>
-                    <td className="num strong">{time(row.workSeconds)}</td>
-                    <td className="num">
-                      {row.workSeconds !== null && row.tickets > 0
-                        ? formatDuration(row.workSeconds / row.tickets)
-                        : "—"}
-                    </td>
-                    <td className="num wait">{time(row.waitSeconds)}</td>
-                    <td className="num est">
-                      {share === null ? "—" : `≈ €${Math.round(share)}`}
-                    </td>
-                    <td>
-                      <PhaseMix
-                        values={
-                          shade === "cost" ? row.phaseCost : row.phaseWork
-                        }
-                        shade={shade}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+            );
+          })}
+        </tbody>
+      </table>
+      {rows.length > 0 && (
+        <>
           <div className="legend">
             {PHASES.map((phase) => (
               <span key={phase}>
@@ -201,8 +259,8 @@ export default async function ProjectsPage({
             {monthName(settings.now, "long")}, split over the projects by their
             cost this month. An estimate: it assumes all Max use is craft.
           </p>
-        </section>
-      </main>
-    </>
+        </>
+      )}
+    </>,
   );
 }

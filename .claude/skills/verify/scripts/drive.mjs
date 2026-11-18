@@ -237,6 +237,12 @@ try {
       if (scroll > 0)
         failures.push(`${page.path} scrolls sideways on ${platform}`);
       if (page.shade) {
+        const readAt = await tab.locator(".read-at").allTextContents();
+        log.push(`read time: ${JSON.stringify(readAt)}`);
+        if (readAt.length !== 1 || !/^Read at \d\d:\d\d$/.test(readAt[0]))
+          failures.push(
+            `${page.path} has no "Read at HH:MM" line on ${platform}`,
+          );
         const rows = await tab.locator("tbody tr").evaluateAll((trs) =>
           trs.map((tr) => ({
             cells: [...tr.querySelectorAll("td")].map((td) =>

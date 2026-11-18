@@ -8,7 +8,7 @@ const tickets = Ticket.array().parse(ticketFile);
 export const fixtureReaders: Readers = {
   sessions: {
     async sessions() {
-      return sessions;
+      return { sessions, unreadable: [] };
     },
   },
   tickets: {

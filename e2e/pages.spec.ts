@@ -146,6 +146,7 @@ test.describe("Projects", () => {
     const bucket = page.getByRole("link", { name: "Open the bucket" });
     await expect(bucket).toHaveAttribute("href", BUCKET);
     await expect(bucket).not.toHaveAttribute("target", /.+/);
+    await expect(page.locator(".read-at")).toHaveText(/^Read at \d\d:\d\d$/);
     await expectShade(page, "cost");
     await expect(page.locator(".legend span")).toHaveText(PHASE_NAMES);
     await expect(page.locator(".legend i")).toHaveClass(
