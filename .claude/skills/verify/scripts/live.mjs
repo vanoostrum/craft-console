@@ -1,5 +1,6 @@
 // The live step: open the Projects page once on CONSOLE_DATA=live, and check
-// its numbers against `gcloud storage ls` and the Linear API. Run it in a
+// its numbers against `gcloud storage ls` and the Linear API. Then open the
+// Craft versions page once, and report its rows or its notice. Run it in a
 // Claude cloud session, where the proxy adds the credentials, with
 // NODE_USE_ENV_PROXY=1 so Node's fetch goes through the proxy.
 // Usage: node live.mjs <app url> <evidence dir>
@@ -40,7 +41,6 @@ const tab = await browser.newPage({ viewport: { width: 1280, height: 800 } });
 const response = await tab.goto(base);
 say(`GET / -> ${response.status()}`);
 const error = await tab.locator("main .notice.error").allTextContents();
-const readAt = await tab.locator(".read-at").allTextContents();
 const skipped = await tab
   .locator("main .notice[role=status] li")
   .allTextContents();
@@ -65,11 +65,27 @@ await tab.screenshot({
   path: join(dir, "app_projects-live_desktop.png"),
   fullPage: true,
 });
+const versionsResponse = await tab.goto(`${base}/versions`);
+const versionsNotice = await tab
+  .locator("main .notice, main p.note")
+  .allTextContents();
+const versionRows = await tab
+  .locator("table.grid tbody tr")
+  .evaluateAll((trs) =>
+    trs.map((tr) =>
+      [...tr.querySelectorAll("td")]
+        .map((td) => td.innerText.replace(/\s+/g, " ").trim())
+        .join(" | "),
+    ),
+  );
+await tab.screenshot({
+  path: join(dir, "app_craft-versions-live_desktop.png"),
+  fullPage: true,
+});
 await browser.close();
 
 const after = listing();
 say(`gcloud storage ls after the request: ${after.length} metadata.json files`);
-say(`page read time: ${JSON.stringify(readAt)}`);
 say(`page skipped files: ${skipped.length}`);
 const missingModels = notes.filter((note) =>
   note.startsWith("* Some cost is missing"),
@@ -79,8 +95,15 @@ say(
 );
 for (const path of skipped) say(`  ${path}`);
 
+say(`GET /versions -> ${versionsResponse.status()}`);
+say(`versions rows: ${versionRows.length}`);
+for (const row of versionRows) say(`  ${row}`);
+say(`versions notices and notes: ${JSON.stringify(versionsNotice)}`);
+
 const failures = [];
 if (error.length) failures.push(`the page shows an error: ${error[0]}`);
+if (versionsResponse.status() !== 200)
+  failures.push(`/versions answered ${versionsResponse.status()}`);
 
 // What the files hold: repo and ticket keys, read with gcloud, not with the app.
 const sessions = new Map();

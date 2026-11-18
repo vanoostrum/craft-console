@@ -1,5 +1,5 @@
 // Open each page of the running app, check the Projects numbers against the
-// fixture totals, and save screenshots of the app and of the gallery page.
+// fixture totals, check the order of the Craft versions rows, and save screenshots of the app and of the gallery page.
 // Usage: node drive.mjs <base url> <evidence dir>
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -55,6 +55,13 @@ const PAGES = [
     feature: "craft-versions",
     path: "/versions",
     gallery: "design/pages/craft-versions/default.html",
+    versions: "cost",
+  },
+  {
+    feature: "craft-versions-time",
+    path: "/versions?shade=time",
+    gallery: "design/pages/craft-versions/time.html",
+    versions: "time",
   },
 ];
 
@@ -283,13 +290,65 @@ try {
       );
       if (scroll > 0)
         failures.push(`${page.path} scrolls sideways on ${platform}`);
-      if (page.shade) {
-        const readAt = await tab.locator(".read-at").allTextContents();
-        log.push(`read time: ${JSON.stringify(readAt)}`);
-        if (readAt.length !== 1 || !/^Read at \d\d:\d\d$/.test(readAt[0]))
-          failures.push(
-            `${page.path} has no "Read at HH:MM" line on ${platform}`,
+      // No page shows when the app read the data.
+      const readAt =
+        (await tab.locator(".read-at").count()) +
+        (await tab.locator("body").innerText()).split("Read at").length -
+        1;
+      log.push(`"Read at" lines: ${readAt}`);
+      if (readAt > 0)
+        failures.push(`${page.path} has a "Read at" line on ${platform}`);
+      if (page.versions) {
+        const rows = await tab
+          .locator("table.grid tbody tr")
+          .evaluateAll((trs) =>
+            trs.map((tr) =>
+              [...tr.querySelectorAll("td")].map((td) => {
+                const text = td.innerText.replace(/\s+/g, " ").trim();
+                const shade = [...td.classList].find((c) => /^c[1-5]$/.test(c));
+                return shade ? `${text} [${shade}]` : text;
+              }),
+            ),
           );
+        log.push(`version rows:\n${rows.map((r) => r.join(" | ")).join("\n")}`);
+        const names = rows.map((r) => r[0]);
+        const known = names.filter((n) => n !== "Unknown version");
+        const parse = (v) => v.split(".").map(Number);
+        const sorted = [...known].sort((a, b) => {
+          const [x, y] = [parse(a), parse(b)];
+          return y[0] - x[0] || y[1] - x[1] || y[2] - x[2];
+        });
+        const want = names.includes("Unknown version")
+          ? [...sorted, "Unknown version"]
+          : sorted;
+        if (
+          known.length === 0 ||
+          !known.every((v) => /^\d+\.\d+\.\d+$/.test(v)) ||
+          JSON.stringify(names) !== JSON.stringify(want)
+        )
+          failures.push(
+            `${page.path} versions are not newest first with Unknown version last on ${platform}`,
+          );
+        const unknownShaded = rows
+          .filter((r) => r[0] === "Unknown version")
+          .some((r) => r.some((cell) => / \[c[1-5]\]$/.test(cell)));
+        if (unknownShaded)
+          failures.push(`${page.path} shades the Unknown version row`);
+        if ((await tab.locator("main").innerText()).includes("NaN"))
+          failures.push(`${page.path} shows NaN on ${platform}`);
+        const current = await tab
+          .locator('[aria-labelledby="shade-label"] [aria-current="true"]')
+          .allTextContents();
+        log.push(`Shade by current: ${JSON.stringify(current)}`);
+        if (
+          JSON.stringify(current) !==
+          JSON.stringify([page.versions === "cost" ? "€ cost" : "craft time"])
+        )
+          failures.push(`${page.path} has the wrong Shade by link current`);
+        const notes = await tab.locator("p.note").allTextContents();
+        log.push(`notes: ${JSON.stringify(notes)}`);
+      }
+      if (page.shade) {
         const rows = await tab.locator("tbody tr").evaluateAll((trs) =>
           trs.map((tr) => ({
             cells: [...tr.querySelectorAll("td")].map((td) =>
