@@ -76,7 +76,10 @@ _Avoid_: Duration, wall-clock time
 The gaps of a segment that end with an incoming message: craft waits for the owner. `metadata.json` holds it per segment as `wait_seconds`.
 
 **Craft version**:
-The version of craft that ran a segment, such as `2.9.0`, from `craft_version` in `metadata.json`. A segment without one has an unknown version.
+The version of craft that ran a segment, such as `2.9.0`, from `craft_version` in `metadata.json`. A segment without one, or with a value that is not three dot-separated whole numbers, has an unknown version. The Craft versions page shows it under "Unknown version".
+
+**Craft versions page**:
+The page at `/versions`: for each craft version, the average cost and craft time per phase per ticket, over all projects, and the change of the totals against the previous version. A phase counts toward the craft version that ran it.
 
 **Max share**:
 An estimate of the real money per project: the monthly price of the owner's Max plan, `CONSOLE_MAX_PLAN_EUR`, split over the projects by their cost in that calendar month. The month is in Europe/Amsterdam time, and a segment counts in the month it ended. It assumes that all Max use is craft.
@@ -88,9 +91,5 @@ The switch between cost and craft time for the grid shading and the phase bars.
 The bar that splits a project's cost, or its craft time, over the phases. Shade by picks which.
 
 **Unreadable session file**:
-A `metadata.json` in the transcript bucket that is not valid JSON or does not have the session shape. The Projects page does not count it, and lists it in a notice.
+A `metadata.json` in the transcript bucket that is not valid JSON or does not have the session shape. No page counts it. The Projects page, the project page, and the Craft versions page list it in a notice.
 _Avoid_: Broken session, bad file
-
-**Read time**:
-When the app last read the data source. The page shows it as "Read at", because the app keeps a read for 5 minutes.
-_Avoid_: Last updated, refreshed at

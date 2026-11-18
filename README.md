@@ -14,7 +14,7 @@ pnpm dev
 
 The app starts on http://localhost:3000. `http://localhost:3000/api/health` returns `ok`, and `/` shows the fixture rows.
 
-`CONSOLE_DATA` picks the data source. Unset, empty, or `fixtures` reads the fixtures in `src/fixtures/`. `live` reads the transcript bucket `gs://craft-transcripts` and Linear. The app keeps each read for 5 minutes, and the Projects page shows when it read ("Read at").
+`CONSOLE_DATA` picks the data source. Unset, empty, or `fixtures` reads the fixtures in `src/fixtures/`. `live` reads the transcript bucket `gs://craft-transcripts` and Linear. The app keeps each read for 5 minutes.
 
 ## Live data
 
@@ -33,7 +33,7 @@ CONSOLE_DATA=live
 LINEAR_API_KEY=lin_api_...
 ```
 
-Then run `pnpm build && pnpm start`, or `pnpm dev`. An empty value counts as not set. The bucket reader uses `GCS_CREDENTIALS_JSON` first, then an ADC file, then no credentials. When a read fails, the Projects page says which source failed and why.
+Then run `pnpm build && pnpm start`, or `pnpm dev`. An empty value counts as not set. The bucket reader uses `GCS_CREDENTIALS_JSON` first, then an ADC file, then no credentials. When a read fails, each page says which source failed and why.
 
 Production reads live data once `CONSOLE_DATA=live` is set in Vercel for Production. Previews and CI stay on fixtures.
 
