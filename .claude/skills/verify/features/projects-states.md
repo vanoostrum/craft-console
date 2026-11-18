@@ -11,4 +11,4 @@ The four states of the Projects page on live data, each against the synthetic st
 
 Recipe: `$V drive` runs `states.mjs` after the fixture pages. It needs a built app. For each state it starts a fresh app, saves `app_projects_<state>_<platform>.png` and `gallery_projects_<state>_<platform>.png` for desktop and mobile in `projects-<state>/`, and fails when the state's element is missing or the page scrolls sideways.
 
-The gallery pages draw these states on the Projects overview of CRAFT-68, and the app still shows the repository list. Compare the "Read at" line, the notices, the error line, and the empty row in copy, place, and style. The table columns differ until CRAFT-68.
+The stub sessions have no segments, so cost shows `€0.00`, the time columns show `—`, and the phase bars are empty. Compare everything else with the gallery page: the columns, the top bar with Shade by, the "Read at" line, the notices, the error line, and the empty row.
