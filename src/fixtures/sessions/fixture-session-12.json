@@ -18,7 +18,7 @@
         }
       },
       "subagents": [],
-      "craft_version": "2.8.2",
+      "craft_version": null,
       "model": "claude-opus-5-5",
       "work_seconds": 900,
       "wait_seconds": 13200
