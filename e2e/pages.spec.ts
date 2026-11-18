@@ -146,7 +146,6 @@ test.describe("Projects", () => {
     const bucket = page.getByRole("link", { name: "Open the bucket" });
     await expect(bucket).toHaveAttribute("href", BUCKET);
     await expect(bucket).not.toHaveAttribute("target", /.+/);
-    await expect(page.locator(".read-at")).toHaveText(/^Read at \d\d:\d\d$/);
     await expectShade(page, "cost");
     await expect(page.locator(".legend span")).toHaveText(PHASE_NAMES);
     await expect(page.locator(".legend i")).toHaveClass(
@@ -219,24 +218,20 @@ test.describe("Projects", () => {
   });
 });
 
-test("Craft versions shows the placeholder and links back to Projects", async ({
-  page,
-}) => {
-  await page.goto("/versions");
-  await expect(page).toHaveTitle("Craft versions · Craft Console");
-  await expectTopBar(page, "Craft versions");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Craft versions",
-  );
-  await expect(
-    page.getByText(
-      "The average cost and craft time per phase, by craft version, comes with Craft Console v1.",
-    ),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("link", { name: "Back to Projects" }),
-  ).toHaveAttribute("href", "/");
-});
+for (const path of [
+  "/",
+  "/?shade=time",
+  "/projects/vanoostrum/nap-time",
+  "/projects/no-repo",
+  "/versions",
+])
+  test(`${path} has no "Read at" line`, async ({ page }) => {
+    await page.goto(path);
+    await expect(page.locator("main h1")).toBeVisible();
+    await expect(page.locator(".read-at")).toHaveCount(0);
+    await expect(page.locator("body")).not.toContainText("Read at");
+    await expect(page.locator(".panel-head > h1")).toHaveCount(1);
+  });
 
 test("the tabs move between the pages", async ({ page }) => {
   await page.goto("/");
@@ -266,14 +261,11 @@ for (const [name, path] of [
       await expect(page.locator("header .logo")).toBeVisible();
       await expect(page.locator("main")).toBeVisible();
       await expectNoPageScroll(page);
-      if (name === "projects") {
-        const panel = page.locator(".panel");
-        const overflow = await panel.evaluate(
-          (el) => el.scrollWidth - el.clientWidth,
-        );
-        if (platform === "mobile") expect(overflow).toBeGreaterThan(0);
-        else expect(overflow).toBe(0);
-      }
+      const overflow = await page
+        .locator(".panel")
+        .evaluate((el) => el.scrollWidth - el.clientWidth);
+      if (platform === "mobile") expect(overflow).toBeGreaterThan(0);
+      else expect(overflow).toBe(0);
       await page.screenshot({
         path: `screenshots/${name}_${platform}.png`,
         fullPage: true,

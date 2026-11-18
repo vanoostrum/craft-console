@@ -7,7 +7,6 @@ import { formatDuration, formatEuro, formatPlanPrice } from "@/lib/format";
 import { MAX_SHARE_TIME_ZONE, maxShare } from "@/lib/max-share";
 import { projectPath, projects, type PhaseValues } from "@/lib/projects";
 import { ReadError } from "@/lib/read-error";
-import { readAtLabel } from "@/lib/read-time";
 import { shadeBy, type ShadeBy } from "@/lib/shade";
 import { ReadErrorNotice, SkippedFilesNotice } from "./read-notices";
 import { ShadeSwitch, withShade } from "./shade-switch";
@@ -120,10 +119,7 @@ export default async function ProjectsPage({
   return page(
     <>
       <div className="panel-head">
-        <div className="title">
-          {heading}
-          <span className="read-at">{readAtLabel(read.readAt)}</span>
-        </div>
+        {heading}
         {bucketLink}
       </div>
       <SkippedFilesNotice unreadable={unreadable} />
