@@ -13,14 +13,34 @@
     <a href="../projects/default.html">Projects</a>
     <a href="default.html" aria-current="page">Craft versions</a>
   </nav>
+  <div class="tools">
+    <span class="label" id="shade-label">Shade by</span>
+    <div class="toggle" role="group" aria-labelledby="shade-label">
+      <button type="button" aria-pressed="true">€ cost</button>
+      <button type="button" aria-pressed="false">craft time</button>
+    </div>
+  </div>
 </header>
 <main>
   <section class="panel" aria-labelledby="versions-title">
     <div class="panel-head">
-      <h1 id="versions-title">Craft versions</h1>
+      <h1 id="versions-title">Craft versions <span class="sub">/ average per ticket, all projects · each cell: cost, then craft working time · shade = cost</span></h1>
+      <a class="primary" href="https://github.com/vanoostrum/craft/releases">Craft releases</a>
     </div>
-    <p class="panel-body">The average cost and craft time per phase, by craft version, comes with Craft Console v1.</p>
-    <p class="panel-body actions"><a class="primary" href="../projects/default.html">Back to Projects</a></p>
+    <table class="grid">
+      <thead>
+        <tr><th>Version</th><th>Tickets</th><th>plan</th><th>spec</th><th>design</th><th>build</th><th>review</th><th>merge</th><th>other</th><th class="sep">cost a ticket</th><th>time a ticket</th></tr>
+      </thead>
+      <tbody>
+<tr><td><span class="key">2.9.0</span><span class="state">17 Nov</span></td><td>4</td><td class="empty">·</td><td class="cell c3"><div>€5.10</div><div>8m</div></td><td class="empty">·</td><td class="cell c3"><div>€3.20</div><div>12m</div></td><td class="cell c2"><div>€2.10</div><div>6m</div></td><td class="cell c1"><div>€0.60</div><div>1m</div></td><td class="cell c1"><div>€0.40</div><div>1m</div></td><td class="tot sep">€11.40<span class="delta down">▼ 20% vs 2.8.2</span></td><td class="tot">28m<span class="delta down">▼ 20% vs 2.8.2</span></td></tr>
+<tr><td><span class="key">2.8.2</span><span class="state">17 Nov</span></td><td>3</td><td class="empty">·</td><td class="cell c4"><div>€6.40</div><div>10m</div></td><td class="empty">·</td><td class="cell c3"><div>€3.60</div><div>14m</div></td><td class="cell c2"><div>€2.80</div><div>8m</div></td><td class="cell c1"><div>€0.90</div><div>2m</div></td><td class="cell c1"><div>€0.50</div><div>1m</div></td><td class="tot sep">€14.20<span class="delta down">▼ 48% vs 2.8.1</span></td><td class="tot">35m<span class="delta down">▼ 38% vs 2.8.1</span></td></tr>
+<tr><td><span class="key">2.8.1</span><span class="state">16 Nov</span></td><td>5</td><td class="cell c4"><div>€9.20</div><div>14m</div></td><td class="cell c4"><div>€7.90</div><div>12m</div></td><td class="cell c2"><div>€1.80</div><div>3m</div></td><td class="cell c3"><div>€3.40</div><div>15m</div></td><td class="cell c3"><div>€3.30</div><div>9m</div></td><td class="cell c2"><div>€1.00</div><div>2m</div></td><td class="cell c1"><div>€0.60</div><div>1m</div></td><td class="tot sep">€27.20<span class="delta down">▼ 36% vs 2.8.0</span></td><td class="tot">56m<span class="delta down">▼ 10% vs 2.8.0</span></td></tr>
+<tr><td><span class="key">2.8.0</span><span class="state">16 Nov</span></td><td>6</td><td class="cell c4"><div>€8.80</div><div>13m</div></td><td class="cell c5"><div>€22.50</div><div>16m</div></td><td class="cell c2"><div>€2.10</div><div>3m</div></td><td class="cell c3"><div>€3.90</div><div>17m</div></td><td class="cell c3"><div>€3.60</div><div>10m</div></td><td class="cell c2"><div>€1.10</div><div>2m</div></td><td class="cell c1"><div>€0.70</div><div>1m</div></td><td class="tot sep">€42.70<span class="delta up">▲ 26% vs 2.7.0</span></td><td class="tot">1h02m<span class="delta down">▼ 13% vs 2.7.0</span></td></tr>
+<tr><td><span class="key">2.7.0</span><span class="state">14 Nov</span></td><td>7</td><td class="cell c4"><div>€10.40</div><div>16m</div></td><td class="cell c4"><div>€9.80</div><div>14m</div></td><td class="cell c2"><div>€2.30</div><div>4m</div></td><td class="cell c3"><div>€4.30</div><div>19m</div></td><td class="cell c3"><div>€4.90</div><div>13m</div></td><td class="cell c2"><div>€1.40</div><div>3m</div></td><td class="cell c1"><div>€0.90</div><div>2m</div></td><td class="tot sep">€34.00<span class="delta">first version</span></td><td class="tot">1h11m<span class="delta">first version</span></td></tr>
+<tr class="unknown"><td>Unknown version</td><td>4</td><td class="cell"><div>€7.00</div><div>11m</div></td><td class="cell"><div>€14.50</div><div>22m</div></td><td class="empty">·</td><td class="cell"><div>€11.30</div><div>22m</div></td><td class="cell"><div>€9.40</div><div>21m</div></td><td class="cell"><div>€5.90</div><div>3m</div></td><td class="cell"><div>€1.90</div><div>1m</div></td><td class="tot sep">€50.00</td><td class="tot">1h20m</td></tr>
+      </tbody>
+    </table>
+    <p class="note">A phase counts toward the craft version that ran it. A cell is the average over the tickets that had that phase on that version. Sessions from before craft recorded its version, where the release dates do not settle it, are under "Unknown version" and are not compared.</p>
   </section>
 </main>
 </body>
