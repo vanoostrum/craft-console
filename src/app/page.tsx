@@ -141,7 +141,11 @@ export default async function ProjectsPage({
                     <td className="name">
                       {row.name}
                       {row.repository !== null && (
-                        <span className="repo">{row.repository}</span>
+                        <>
+                          {/* A break point, so a long name can wrap on a phone. */}
+                          <wbr />
+                          <span className="repo">{row.repository}</span>
+                        </>
                       )}
                     </td>
                     <td className="num">{row.tickets}</td>
