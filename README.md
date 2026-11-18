@@ -37,6 +37,8 @@ Then run `pnpm build && pnpm start`, or `pnpm dev`. An empty value counts as not
 
 Production reads live data once `CONSOLE_DATA=live` is set in Vercel for Production. Previews and CI stay on fixtures.
 
+`CONSOLE_MAX_PLAN_EUR` is the monthly price of the owner's Max plan in euros, for the Max share. Unset or empty means €93 (Max 100). `CONSOLE_NOW` fixes the current time with the fixtures, as an ISO time such as `2026-11-22T12:00:00Z`, so the tests have a stable current month. `pnpm start` stops with a message for a wrong value of either.
+
 ## Checks
 
 The `project-verify` skill in `.claude/skills/` lists the commands that CI runs.

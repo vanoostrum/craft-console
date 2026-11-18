@@ -1,11 +1,11 @@
-// `pnpm start`: check CONSOLE_DATA, then start the built app. A wrong value
+// `pnpm start`: check CONSOLE_DATA, CONSOLE_MAX_PLAN_EUR, and CONSOLE_NOW, then start the built app. A wrong value
 // stops here with a non-zero status, before the server serves a request.
 import { spawn } from "node:child_process";
 // Node 22.18+ loads the .ts file with its built-in type stripping (see `engines`).
-import { parseDataSource } from "../src/lib/console-data.ts";
+import { consoleSettings } from "../src/lib/console-data.ts";
 
 try {
-  parseDataSource(process.env.CONSOLE_DATA);
+  consoleSettings(process.env);
 } catch (error) {
   console.error(error instanceof Error ? error.message : error);
   process.exit(1);

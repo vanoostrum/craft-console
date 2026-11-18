@@ -3,7 +3,7 @@ import { parseDataSource } from "./console-data";
 import { fixtureReaders } from "./fixture-readers";
 import { liveReaders } from "./live-readers";
 import type { Readers, Ticket } from "./readers";
-import { ticketKeys } from "./repository-rows";
+import { ticketKeys } from "./projects";
 import type { SessionMetadata } from "./session-metadata";
 
 /**

@@ -28,15 +28,15 @@ $V cleanup   # stop the app
 
 One file per entry point in `features/`, with its recipe:
 
-| Feature                        | File                          | State                                    |
-| ------------------------------ | ----------------------------- | ---------------------------------------- |
-| Projects `/`                   | `features/projects.md`        | driven                                   |
-| Projects states on live data   | `features/projects-states.md` | driven by `drive`                        |
-| Projects on real live data     | `features/projects-live.md`   | driven by `live`                         |
-| Craft versions `/versions`     | `features/craft-versions.md`  | driven                                   |
-| Health `/api/health`           | `features/health.md`          | driven by `launch`                       |
-| Project page                   | —                             | added by the ticket that builds the page |
-| "Shade by" on the project page | —                             | added by the ticket that builds the page |
-| A level folded open            | —                             | added by the ticket that builds the page |
+| Feature                         | File                          | State                                    |
+| ------------------------------- | ----------------------------- | ---------------------------------------- |
+| Projects `/` and `/?shade=time` | `features/projects.md`        | driven                                   |
+| Projects states on live data    | `features/projects-states.md` | driven by `drive`                        |
+| Projects on real live data      | `features/projects-live.md`   | driven by `live`                         |
+| Craft versions `/versions`      | `features/craft-versions.md`  | driven                                   |
+| Health `/api/health`            | `features/health.md`          | driven by `launch`                       |
+| Project page                    | —                             | added by the ticket that builds the page |
+| "Shade by" on the project page  | —                             | added by the ticket that builds the page |
+| A level folded open             | —                             | added by the ticket that builds the page |
 
 The live step reads the real bucket and Linear. Run it in a Claude cloud session, where the proxy adds the credentials. Its evidence holds real repository names and counts: keep it out of the public repository and its PRs.

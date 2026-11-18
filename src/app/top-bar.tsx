@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 const TABS = [
   { href: "/", label: "Projects" },
@@ -7,8 +8,11 @@ const TABS = [
 
 export function TopBar({
   current,
+  tools,
 }: {
   current: (typeof TABS)[number]["href"];
+  /** Controls at the right of the bar, such as the Shade by switch. */
+  tools?: ReactNode;
 }) {
   return (
     <header className="topbar">
@@ -24,6 +28,7 @@ export function TopBar({
           </Link>
         ))}
       </nav>
+      {tools && <div className="tools">{tools}</div>}
     </header>
   );
 }

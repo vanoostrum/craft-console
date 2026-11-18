@@ -52,15 +52,39 @@ async function start(env: Record<string, string> = {}) {
   return app;
 }
 
+/**
+ * Each overview row as [repository or "No repository", sessions, tickets]. The
+ * empty row is [its text].
+ */
 async function rows(page: Page): Promise<string[][]> {
-  return page
-    .locator("tbody tr")
-    .evaluateAll((trs) =>
-      trs.map((tr) =>
-        [...tr.querySelectorAll("td")].map((td) => td.textContent!.trim()),
-      ),
-    );
+  return page.locator("tbody tr").evaluateAll((trs) =>
+    trs.map((tr) => {
+      const cells = [...tr.querySelectorAll("td")];
+      if (cells[0].classList.contains("empty"))
+        return [cells[0].textContent!.trim()];
+      const name =
+        cells[0].querySelector(".repo")?.textContent ??
+        cells[0].textContent!.trim();
+      return [
+        name,
+        tr.getAttribute("data-sessions")!,
+        cells[1].textContent!.trim(),
+      ];
+    }),
+  );
 }
+
+const COLUMNS = [
+  "Project",
+  "Tickets",
+  "Cost",
+  "Avg cost",
+  "Craft time",
+  "Avg time",
+  "Waiting on you",
+  /^Max share · [A-Z][a-z]{2}$/,
+  "Phase mix · cost",
+];
 
 const amsterdam = (time: Date) =>
   `Read at ${new Intl.DateTimeFormat("en-GB", {
@@ -80,6 +104,21 @@ test("lists each repository with sessions from the bucket and tickets from Linea
   expect(await rows(page)).toEqual(DEFAULT_ROWS);
   const readAt = (await page.locator(".read-at").textContent())!;
   expect([amsterdam(before), amsterdam(after)]).toContain(readAt);
+  await expect(page.getByRole("columnheader")).toHaveText(COLUMNS);
+  // Stub sessions have no segments: no cost, no craft time.
+  const alpha = page.locator("tbody tr").first().locator("td");
+  await expect(alpha).toHaveText([
+    "Synthetic projectvanoostrum/alpha",
+    "3",
+    "€0.00",
+    "€0.00",
+    "—",
+    "—",
+    "—",
+    /^(≈ €\d+|—)$/,
+    "",
+  ]);
+  await expect(alpha.locator(".mix")).toHaveAttribute("title", "no cost");
   await expect(page.locator("main").getByRole("status")).toHaveCount(0);
   await expect(page.locator("main").getByRole("alert")).toHaveCount(0);
 });
@@ -131,15 +170,11 @@ test("an empty bucket shows the table header and the empty row", async ({
   stub.scenario = scenario([], []);
   const { url } = await start();
   await page.goto(url);
-  await expect(page.getByRole("columnheader")).toHaveText([
-    "Repository",
-    "Sessions",
-    "Tickets",
-  ]);
+  await expect(page.getByRole("columnheader")).toHaveText(COLUMNS);
   expect(await rows(page)).toEqual([
     ["No sessions in the transcript bucket yet."],
   ]);
-  await expect(page.locator("td.empty")).toHaveAttribute("colspan", "3");
+  await expect(page.locator("td.empty")).toHaveAttribute("colspan", "9");
   await expect(page.locator(".read-at")).toHaveText(/^Read at \d\d:\d\d$/);
 });
 

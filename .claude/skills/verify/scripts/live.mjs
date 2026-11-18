@@ -44,13 +44,23 @@ const readAt = await tab.locator(".read-at").allTextContents();
 const skipped = await tab
   .locator("main .notice[role=status] li")
   .allTextContents();
-const rows = await tab
-  .locator("tbody tr")
-  .evaluateAll((trs) =>
-    trs.map((tr) =>
-      [...tr.querySelectorAll("td")].map((td) => td.textContent.trim()),
-    ),
-  );
+// Each overview row: [repository or "No repository", sessions, tickets].
+const rows = await tab.locator("tbody tr").evaluateAll((trs) =>
+  trs
+    .filter((tr) => !tr.querySelector("td.empty"))
+    .map((tr) => {
+      const cells = [...tr.querySelectorAll("td")];
+      const name =
+        cells[0].querySelector(".repo")?.textContent ??
+        cells[0].textContent.trim();
+      return [
+        name,
+        tr.getAttribute("data-sessions"),
+        cells[1].textContent.trim(),
+      ];
+    }),
+);
+const notes = await tab.locator("main p.note").allTextContents();
 await tab.screenshot({
   path: join(dir, "app_projects-live_desktop.png"),
   fullPage: true,
@@ -61,6 +71,12 @@ const after = listing();
 say(`gcloud storage ls after the request: ${after.length} metadata.json files`);
 say(`page read time: ${JSON.stringify(readAt)}`);
 say(`page skipped files: ${skipped.length}`);
+const missingModels = notes.filter((note) =>
+  note.startsWith("* Some cost is missing"),
+);
+say(
+  `page missing-model note: ${missingModels.length ? missingModels[0] : "none"}`,
+);
 for (const path of skipped) say(`  ${path}`);
 
 const failures = [];

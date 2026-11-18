@@ -9,7 +9,7 @@ These are the fields that the Console reads, added to each segment. The names ar
 | `craft_version` | string or null | The version in craft's `plugin.json` when the step ran, such as `2.9.0`. Null when it is not known.                              |
 | `model`         | string or null | The model of the step's own turns. Subagents keep their own tokens per model.                                                    |
 | `work_seconds`  | number         | Craft time: the gaps between transcript lines, except the gaps that end with an incoming message.                                |
-| `wait_seconds`  | number         | Waiting on the owner: the gaps that end with an incoming message, a `queue-operation` line.                                      |
+| `wait_seconds`  | number         | Waiting on the owner: the gaps that end with an incoming message: a `queue-operation` `enqueue` line, or a typed prompt.         |
 | `brief`         | string or null | For a `craft:brainstorm` or `craft:setup` segment: the URL of the Linear document `Brief: <name>` that it wrote. Null otherwise. |
 
 A one-shot spec session gets one segment per ticket that it specifies, so its cost lands on each ticket, not on the last one it names.

@@ -10,14 +10,18 @@
       "started_at": null,
       "ended_at": "2026-11-07T09:01:00.000Z",
       "tokens": {
-        "claude-sonnet-x": {
-          "input_tokens": 70,
-          "output_tokens": 35,
-          "cache_creation_input_tokens": 100,
-          "cache_read_input_tokens": 1000
+        "claude-opus-5-5": {
+          "input_tokens": 1049,
+          "output_tokens": 13900,
+          "cache_creation_input_tokens": 109000,
+          "cache_read_input_tokens": 1390000
         }
       },
-      "subagents": []
+      "subagents": [],
+      "craft_version": "2.8.2",
+      "model": "claude-opus-5-5",
+      "work_seconds": 300,
+      "wait_seconds": 6000
     },
     {
       "step": "craft:build",
@@ -25,14 +29,18 @@
       "started_at": "2026-11-07T09:05:00.000Z",
       "ended_at": "2026-11-07T09:50:00.000Z",
       "tokens": {
-        "claude-sonnet-x": {
-          "input_tokens": 700,
-          "output_tokens": 350,
-          "cache_creation_input_tokens": 2000,
-          "cache_read_input_tokens": 30000
+        "claude-sonnet-5-5": {
+          "input_tokens": 2052,
+          "output_tokens": 23200,
+          "cache_creation_input_tokens": 172000,
+          "cache_read_input_tokens": 2320000
         }
       },
-      "subagents": []
+      "subagents": [],
+      "craft_version": "2.8.2",
+      "model": "claude-sonnet-5-5",
+      "work_seconds": 780,
+      "wait_seconds": 8400
     },
     {
       "step": "craft:review",
@@ -40,14 +48,18 @@
       "started_at": "2026-11-07T10:05:00.000Z",
       "ended_at": "2026-11-07T10:50:00.000Z",
       "tokens": {
-        "claude-sonnet-x": {
-          "input_tokens": 700,
-          "output_tokens": 350,
-          "cache_creation_input_tokens": 2000,
-          "cache_read_input_tokens": 30000
+        "claude-opus-5-5": {
+          "input_tokens": 2055,
+          "output_tokens": 23500,
+          "cache_creation_input_tokens": 175000,
+          "cache_read_input_tokens": 2350000
         }
       },
-      "subagents": []
+      "subagents": [],
+      "craft_version": "2.8.2",
+      "model": "claude-opus-5-5",
+      "work_seconds": 960,
+      "wait_seconds": 7200
     }
   ],
   "event": "SessionEnd",

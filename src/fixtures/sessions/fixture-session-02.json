@@ -7,14 +7,14 @@
     {
       "step": "craft:spec",
       "ticket": "NAP-102",
-      "started_at": "2026-11-02T09:05:00.000Z",
-      "ended_at": "2026-11-02T09:50:00.000Z",
+      "started_at": "2026-10-02T09:05:00.000Z",
+      "ended_at": "2026-10-02T09:50:00.000Z",
       "tokens": {
-        "claude-sonnet-x": {
-          "input_tokens": 200,
-          "output_tokens": 100,
-          "cache_creation_input_tokens": 2000,
-          "cache_read_input_tokens": 30000
+        "claude-opus-5-5": {
+          "input_tokens": 3014,
+          "output_tokens": 28400,
+          "cache_creation_input_tokens": 194000,
+          "cache_read_input_tokens": 2840000
         }
       },
       "subagents": [
@@ -24,11 +24,11 @@
           "started_at": "2026-11-02T09:10:00.000Z",
           "ended_at": "2026-11-02T09:20:00.000Z",
           "tokens": {
-            "claude-sonnet-x": {
-              "input_tokens": 20,
-              "output_tokens": 10,
-              "cache_creation_input_tokens": 300,
-              "cache_read_input_tokens": 4000
+            "claude-sonnet-5-5": {
+              "input_tokens": 514,
+              "output_tokens": 4140,
+              "cache_creation_input_tokens": 20000,
+              "cache_read_input_tokens": 214000
             }
           }
         },
@@ -37,11 +37,22 @@
           "role": null,
           "started_at": "2026-11-02T09:21:00.000Z",
           "ended_at": null,
-          "tokens": {}
+          "tokens": {
+            "claude-haiku-5-5": {
+              "input_tokens": 514,
+              "output_tokens": 4140,
+              "cache_creation_input_tokens": 20000,
+              "cache_read_input_tokens": 214000
+            }
+          }
         }
-      ]
+      ],
+      "craft_version": "2.8.2",
+      "model": "claude-opus-5-5",
+      "work_seconds": 900,
+      "wait_seconds": 13200
     }
   ],
   "event": "SessionEnd",
-  "uploaded_at": "2026-11-02T10:00:00.102468+00:00"
+  "uploaded_at": "2026-10-02T10:00:00.102468+00:00"
 }

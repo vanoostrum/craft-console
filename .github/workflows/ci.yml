@@ -43,6 +43,7 @@ jobs:
     timeout-minutes: 15
     env:
       CONSOLE_DATA: fixtures
+      CONSOLE_NOW: "2026-11-22T12:00:00Z"
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
