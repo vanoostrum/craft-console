@@ -73,7 +73,10 @@ The gaps of a segment that end with an incoming message: craft waits for the own
 The version of craft that ran a segment, such as `2.9.0`, from `craft_version` in `metadata.json`. A segment without one has an unknown version.
 
 **Max share**:
-An estimate of the real money per project: the monthly price of the owner's Max plan, split over the projects by their cost in that calendar month. It assumes that all Max use is craft.
+An estimate of the real money per project: the monthly price of the owner's Max plan, `CONSOLE_MAX_PLAN_EUR`, split over the projects by their cost in that calendar month. The month is in Europe/Amsterdam time, and a segment counts in the month it ended. It assumes that all Max use is craft.
 
 **Shade by**:
 The switch between cost and craft time for the grid shading and the phase bars.
+
+**Phase mix**:
+The bar that splits a project's cost, or its craft time, over the phases. Shade by picks which.
