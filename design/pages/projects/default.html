@@ -13,23 +13,61 @@
     <a href="default.html" aria-current="page">Projects</a>
     <a href="../craft-versions/default.html">Craft versions</a>
   </nav>
+  <div class="tools">
+    <span class="label" id="shade-label">Shade by</span>
+    <div class="toggle" role="group" aria-labelledby="shade-label">
+      <button type="button" aria-pressed="true">€ cost</button>
+      <button type="button" aria-pressed="false">craft time</button>
+    </div>
+  </div>
 </header>
 <main>
   <section class="panel" aria-labelledby="projects-title">
     <div class="panel-head">
-      <h1 id="projects-title">Projects <span class="sub">/ sessions in the transcript bucket, tickets in Linear</span></h1>
+      <h1 id="projects-title">Projects <span class="sub">/ cost at API list prices, craft working time · phase mix by cost</span></h1>
       <a class="primary" href="https://console.cloud.google.com/storage/browser/craft-transcripts">Open the bucket</a>
     </div>
     <table>
       <thead>
-        <tr><th>Repository</th><th class="num">Sessions</th><th class="num">Tickets</th></tr>
+        <tr>
+          <th>Project</th><th class="num">Tickets</th><th class="num">Cost</th><th class="num">Avg cost</th>
+          <th class="num">Craft time</th><th class="num">Avg time</th><th class="num">Waiting on you</th>
+          <th class="num">Max share · Nov</th><th style="width: 24%">Phase mix · cost</th>
+        </tr>
       </thead>
       <tbody>
-        <tr><td class="name">vanoostrum/nap-time</td><td class="num strong">15</td><td class="num strong">12</td></tr>
-        <tr><td class="name">vanoostrum/craft</td><td class="num strong">4</td><td class="num strong">3</td></tr>
-        <tr class="no-repo"><td class="name">No repository</td><td class="num strong">2</td><td class="num strong">0</td></tr>
+        <tr class="raised">
+          <td class="name"><a href="../project/default.html">NapTime</a><span class="repo">vanoostrum/nap-time</span></td>
+          <td class="num">11</td><td class="num strong">€192.30</td><td class="num">€17.48</td>
+          <td class="num strong">5h02m</td><td class="num">27m</td><td class="num wait">196h</td>
+          <td class="num est">≈ €51</td>
+          <td><div class="mix" title="plan 17%, spec 43%, design 3%, build 17%, review 10%, merge 5%, other 5%"><span class="p-plan" style="width:17%"></span><span class="p-spec" style="width:43%"></span><span class="p-design" style="width:3%"></span><span class="p-build" style="width:17%"></span><span class="p-review" style="width:10%"></span><span class="p-merge" style="width:5%"></span><span class="p-other" style="width:5%"></span></div></td>
+        </tr>
+        <tr>
+          <td class="name"><a href="../project/default.html">Craft</a><span class="repo">vanoostrum/craft</span></td>
+          <td class="num">21</td><td class="num strong">€150.15</td><td class="num">€7.15</td>
+          <td class="num strong">3h28m</td><td class="num">10m</td><td class="num wait">188h</td>
+          <td class="num est">≈ €31</td>
+          <td><div class="mix" title="plan 8%, spec 30%, build 27%, review 16%, merge 9%, other 10%"><span class="p-plan" style="width:8%"></span><span class="p-spec" style="width:30%"></span><span class="p-build" style="width:27%"></span><span class="p-review" style="width:16%"></span><span class="p-merge" style="width:9%"></span><span class="p-other" style="width:10%"></span></div></td>
+        </tr>
+        <tr>
+          <td class="name"><a href="../project/default.html">Craft Console</a><span class="repo">vanoostrum/craft-console</span></td>
+          <td class="num">3</td><td class="num strong">€41.70</td><td class="num">€13.90</td>
+          <td class="num strong">1h12m</td><td class="num">24m</td><td class="num wait">14h</td>
+          <td class="num est">≈ €9</td>
+          <td><div class="mix" title="plan 22%, spec 38%, build 21%, review 12%, merge 3%, other 4%"><span class="p-plan" style="width:22%"></span><span class="p-spec" style="width:38%"></span><span class="p-build" style="width:21%"></span><span class="p-review" style="width:12%"></span><span class="p-merge" style="width:3%"></span><span class="p-other" style="width:4%"></span></div></td>
+        </tr>
+        <tr class="no-repo">
+          <td class="name"><a href="../project/default.html">No repository</a></td>
+          <td class="num">0</td><td class="num strong">€3.10</td><td class="num">—</td>
+          <td class="num strong">9m</td><td class="num">—</td><td class="num wait">2h</td>
+          <td class="num est">≈ €1</td>
+          <td><div class="mix" title="other 100%"><span class="p-other" style="width:100%"></span></div></td>
+        </tr>
       </tbody>
     </table>
+    <div class="legend"><span><i class="p-plan"></i>plan</span><span><i class="p-spec"></i>spec</span><span><i class="p-design"></i>design</span><span><i class="p-build"></i>build</span><span><i class="p-review"></i>review</span><span><i class="p-merge"></i>merge</span><span><i class="p-other"></i>other</span></div>
+    <p class="note">Max share: your €93 Max plan for November, split over the projects by their cost this month. An estimate: it assumes all Max use is craft.</p>
   </section>
 </main>
 </body>
