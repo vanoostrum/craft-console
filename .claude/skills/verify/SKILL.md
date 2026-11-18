@@ -27,13 +27,13 @@ $V cleanup   # stop the app
 
 One file per entry point in `features/`, with its recipe:
 
-| Feature                        | File                         | State                                    |
-| ------------------------------ | ---------------------------- | ---------------------------------------- |
-| Projects `/`                   | `features/projects.md`       | driven                                   |
-| Craft versions `/versions`     | `features/craft-versions.md` | driven                                   |
-| Health `/api/health`           | `features/health.md`         | driven by `launch`                       |
-| Project page                   | —                            | added by the ticket that builds the page |
-| "Shade by" on the project page | —                            | added by the ticket that builds the page |
-| A level folded open            | —                            | added by the ticket that builds the page |
+| Feature                         | File                         | State                                    |
+| ------------------------------- | ---------------------------- | ---------------------------------------- |
+| Projects `/` and `/?shade=time` | `features/projects.md`       | driven                                   |
+| Craft versions `/versions`      | `features/craft-versions.md` | driven                                   |
+| Health `/api/health`            | `features/health.md`         | driven by `launch`                       |
+| Project page                    | —                            | added by the ticket that builds the page |
+| "Shade by" on the project page  | —                            | added by the ticket that builds the page |
+| A level folded open             | —                            | added by the ticket that builds the page |
 
 The live step (open Projects once on `CONSOLE_DATA=live`) comes with the Live data ticket (CRAFT-63).

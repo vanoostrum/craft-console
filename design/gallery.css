@@ -231,3 +231,7 @@ tr.unknown td { color: var(--muted); }
 .mix .w98 { width: 98%; }
 .mix .w99 { width: 99%; }
 .mix .w100 { width: 100%; }
+
+/* Read time (CRAFT-63) */
+.panel-head .title { display: flex; flex-direction: column; gap: 2px; }
+.read-at { color: var(--faint); font-family: var(--mono); font-size: 12px; }

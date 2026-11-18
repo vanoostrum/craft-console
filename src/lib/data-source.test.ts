@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { LIVE_NOT_AVAILABLE, parseDataSource } from "./console-data";
+import {
+  LIVE_NOT_AVAILABLE,
+  consoleNow,
+  parseDataSource,
+  parseMaxPlanEur,
+} from "./console-data";
 import { selectReaders } from "./data-source";
 
 describe("parseDataSource", () => {
@@ -46,6 +51,69 @@ describe("selectReaders", () => {
   it("throws the same message as the parsing for a wrong value", () => {
     expect(() => selectReaders("fixture")).toThrow(
       'CONSOLE_DATA="fixture" is not a data source. Use fixtures or live.',
+    );
+  });
+});
+
+describe("parseMaxPlanEur", () => {
+  it.each([
+    [undefined, 93],
+    ["", 93],
+    ["93", 93],
+    ["93.50", 93.5],
+    ["100", 100],
+    ["0.5", 0.5],
+  ] as const)("reads %j as %d", (value, eur) => {
+    expect(parseMaxPlanEur(value)).toBe(eur);
+  });
+
+  it.each([
+    "abc",
+    "0",
+    "0.00",
+    "-5",
+    " 93",
+    "93 ",
+    "93,50",
+    "1e2",
+    "Infinity",
+    "€93",
+  ])("refuses %j and names the value", (value) => {
+    expect(() => parseMaxPlanEur(value)).toThrow(
+      `CONSOLE_MAX_PLAN_EUR="${value}" is not a positive number of euros, such as 93 or 93.50.`,
+    );
+  });
+});
+
+describe("consoleNow", () => {
+  it("reads CONSOLE_NOW with the fixtures", () => {
+    expect(consoleNow("fixtures", "2026-11-22T12:00:00Z").toISOString()).toBe(
+      "2026-11-22T12:00:00.000Z",
+    );
+    expect(
+      consoleNow("fixtures", "2026-11-22T13:00:00+01:00").toISOString(),
+    ).toBe("2026-11-22T12:00:00.000Z");
+  });
+
+  it.each([
+    ["fixtures", undefined],
+    ["fixtures", ""],
+    ["live", "2026-11-22T12:00:00Z"],
+  ] as const)("uses the real clock for %s with %j", (source, value) => {
+    const before = Date.now();
+    const now = consoleNow(source, value).getTime();
+    expect(now).toBeGreaterThanOrEqual(before);
+    expect(now).toBeLessThanOrEqual(Date.now());
+  });
+
+  it.each([
+    "tomorrow",
+    "2026-11-22",
+    "2026-13-01T00:00:00Z",
+    "2026-11-22T12:00:00",
+  ])("refuses %j and names the value", (value) => {
+    expect(() => consoleNow("fixtures", value)).toThrow(
+      `CONSOLE_NOW="${value}" is not an ISO time, such as 2026-11-22T12:00:00Z.`,
     );
   });
 });

@@ -2,12 +2,25 @@
 :root {
   --bg: #0f1115;
   --surface: #14171d;
+  --raised: #171b23;
+  --control: #1c2028;
   --border: #262a33;
+  --border-strong: #2e333d;
   --text: #e6e8ec;
   --strong: #ffffff;
   --muted: #a3a9b6;
+  --faint: #8b92a0;
   --accent: #7fb0ff;
   --accent-hover: #a9c9ff;
+  --waiting: #f3c46b;
+  --pressed: #2e3a52;
+  --phase-plan: #8b93a3;
+  --phase-spec: #4c8dff;
+  --phase-design: #b57bff;
+  --phase-build: #f39a2e;
+  --phase-review: #27b8a8;
+  --phase-merge: #86c13a;
+  --phase-other: #4a505c;
   --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
 }
@@ -144,13 +157,116 @@ td.name {
 .num {
   text-align: right;
 }
-td.num {
+td.num.strong {
   color: var(--strong);
   font-weight: 500;
 }
 tr.no-repo td.name {
   color: var(--muted);
   font-weight: 400;
+}
+
+/* Shade by switch: links, so the current one has aria-current. */
+.topbar .tools {
+  margin-left: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+}
+.tools .label {
+  color: var(--muted);
+}
+.toggle {
+  display: flex;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.toggle a {
+  padding: 6px 10px;
+  background: var(--control);
+  color: var(--muted);
+}
+.toggle a:hover {
+  color: var(--text);
+}
+.toggle a[aria-current="true"] {
+  background: var(--pressed);
+  color: var(--strong);
+}
+
+/* Overview rows */
+td.name .repo {
+  font-family: var(--mono);
+  font-weight: 400;
+  color: var(--muted);
+  margin-left: 6px;
+}
+td.wait {
+  color: var(--waiting);
+}
+td.est {
+  color: var(--muted);
+}
+.mix-col {
+  width: 24%;
+}
+.mix {
+  display: flex;
+  height: 12px;
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--control);
+  min-width: 160px;
+}
+.mix span {
+  display: block;
+  height: 100%;
+}
+.p-plan {
+  background: var(--phase-plan);
+}
+.p-spec {
+  background: var(--phase-spec);
+}
+.p-design {
+  background: var(--phase-design);
+}
+.p-build {
+  background: var(--phase-build);
+}
+.p-review {
+  background: var(--phase-review);
+}
+.p-merge {
+  background: var(--phase-merge);
+}
+.p-other {
+  background: var(--phase-other);
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  padding: 10px 14px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+}
+.legend i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 6px;
+  vertical-align: -1px;
+}
+.note {
+  padding: 10px 14px;
+  color: var(--faint);
+  border-top: 1px solid var(--border);
+  font-size: 12px;
 }
 
 @media (max-width: 600px) {

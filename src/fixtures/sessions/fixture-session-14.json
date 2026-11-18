@@ -10,14 +10,18 @@
       "started_at": null,
       "ended_at": "2026-11-15T09:01:00.000Z",
       "tokens": {
-        "claude-sonnet-x": {
-          "input_tokens": 140,
-          "output_tokens": 70,
-          "cache_creation_input_tokens": 100,
-          "cache_read_input_tokens": 1000
+        "claude-opus-5-5": {
+          "input_tokens": 1098,
+          "output_tokens": 18800,
+          "cache_creation_input_tokens": 158000,
+          "cache_read_input_tokens": 1880000
         }
       },
-      "subagents": []
+      "subagents": [],
+      "craft_version": "2.9.0",
+      "model": "claude-opus-5-5",
+      "work_seconds": 300,
+      "wait_seconds": 5400
     },
     {
       "step": "craft:build",
@@ -25,14 +29,18 @@
       "started_at": "2026-11-15T09:05:00.000Z",
       "ended_at": "2026-11-15T09:50:00.000Z",
       "tokens": {
-        "claude-sonnet-x": {
-          "input_tokens": 1400,
-          "output_tokens": 700,
-          "cache_creation_input_tokens": 2000,
-          "cache_read_input_tokens": 30000
+        "claude-sonnet-5-5": {
+          "input_tokens": 2101,
+          "output_tokens": 28100,
+          "cache_creation_input_tokens": 221000,
+          "cache_read_input_tokens": 2810000
         }
       },
-      "subagents": []
+      "subagents": [],
+      "craft_version": "2.9.0",
+      "model": "claude-sonnet-5-5",
+      "work_seconds": 780,
+      "wait_seconds": 7800
     }
   ],
   "event": "SessionEnd",
