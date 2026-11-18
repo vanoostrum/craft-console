@@ -100,24 +100,20 @@ const COLUMNS = [
   "Phase mix · cost",
 ];
 
-const amsterdam = (time: Date) =>
-  `Read at ${new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Europe/Amsterdam",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).format(time)}`;
+/** No page shows when the app read the data. */
+async function expectNoReadAt(page: Page) {
+  await expect(page.locator(".read-at")).toHaveCount(0);
+  await expect(page.locator("body")).not.toContainText("Read at");
+}
 
-test("lists each repository with sessions from the bucket and tickets from Linear, read at an Amsterdam time", async ({
+test("lists each repository with sessions from the bucket and tickets from Linear, with no read time", async ({
   page,
 }) => {
   const { url } = await start();
-  const before = new Date();
   await page.goto(url);
-  const after = new Date();
   expect(await rows(page)).toEqual(DEFAULT_ROWS);
-  const readAt = (await page.locator(".read-at").textContent())!;
-  expect([amsterdam(before), amsterdam(after)]).toContain(readAt);
+  await expectNoReadAt(page);
+  await expect(page.locator(".panel-head > h1")).toHaveCount(1);
   await expect(page.getByRole("columnheader")).toHaveText(COLUMNS);
   // Stub sessions have no segments: no cost, no craft time.
   const alpha = page.locator("tbody tr").first().locator("td");
@@ -164,17 +160,13 @@ test("sends LINEAR_API_KEY as the Authorization header to Linear only", async ({
   );
 });
 
-test("keeps a read: the next request makes no new read and shows the same read time", async ({
-  page,
-}) => {
+test("keeps a read: the next request makes no new read", async ({ page }) => {
   const { url } = await start();
   await page.goto(url);
-  const readAt = await page.locator(".read-at").textContent();
   const reads = stub.seen.length;
   stub.scenario = scenario([], []);
   await page.reload();
   expect(await rows(page)).toEqual(DEFAULT_ROWS);
-  await expect(page.locator(".read-at")).toHaveText(readAt!);
   expect(stub.seen.length).toBe(reads);
 });
 
@@ -189,7 +181,7 @@ test("an empty bucket shows the table header and the empty row", async ({
     ["No sessions in the transcript bucket yet."],
   ]);
   await expect(page.locator("td.empty-row")).toHaveAttribute("colspan", "9");
-  await expect(page.locator(".read-at")).toHaveText(/^Read at \d\d:\d\d$/);
+  await expectNoReadAt(page);
 });
 
 test("a failed bucket read shows the error and no numbers, and is not kept", async ({
@@ -399,13 +391,11 @@ test("an error shows no credential, on the page or in the server log", async ({
 });
 
 test.describe("project page", () => {
-  test("a stub repository opens with its heading, Open in Linear, the read time, and only a Total row", async ({
+  test("a stub repository opens with its heading, Open in Linear, no read time, and only a Total row", async ({
     page,
   }) => {
     const { url } = await start();
-    const before = new Date();
     const response = await page.goto(`${url}/projects/vanoostrum/alpha`);
-    const after = new Date();
     expect(response?.status()).toBe(200);
     await expect(page.locator("main h1")).toHaveText(
       /^Synthetic project vanoostrum\/alpha \/ tickets × phases/,
@@ -413,8 +403,8 @@ test.describe("project page", () => {
     await expect(
       page.getByRole("link", { name: "Open in Linear" }),
     ).toHaveAttribute("href", "https://linear.app/example/project/synthetic");
-    const readAt = (await page.locator(".read-at").textContent())!;
-    expect([amsterdam(before), amsterdam(after)]).toContain(readAt);
+    await expectNoReadAt(page);
+    await expect(page.locator(".panel-head > h1")).toHaveCount(1);
     // Stub sessions have no segments: the grid has only Total.
     const total = page.locator("table.grid tbody tr");
     await expect(total).toHaveCount(1);
@@ -482,10 +472,107 @@ test.describe("project page", () => {
     };
     const { url } = await start();
     await page.goto(`${url}/projects/no-repo`);
+    await expectNoReadAt(page);
     const notice = page.locator("main").getByRole("status");
     await expect(notice).toContainText(
       "1 session file could not be read and is not counted:",
     );
     await expect(notice.locator("li")).toHaveText([bad]);
+  });
+});
+
+test.describe("Craft versions page", () => {
+  const HEADING =
+    "Craft versions / average per ticket, all projects · each cell: cost, then craft working time · shade = cost";
+
+  async function expectHead(page: Page) {
+    await expect(page.locator(".topbar")).toBeVisible();
+    await expect(page.getByRole("group", { name: "Shade by" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(HEADING);
+    await expect(
+      page.getByRole("link", { name: "Craft releases" }),
+    ).toHaveAttribute("href", "https://github.com/vanoostrum/craft/releases");
+    await expectNoReadAt(page);
+  }
+
+  const EMPTY = "No craft version has finished a ticket yet.";
+
+  test("stub sessions with no segments show the empty line, with no grid and no note", async ({
+    page,
+  }) => {
+    const { url } = await start();
+    await page.goto(`${url}/versions`);
+    await expectHead(page);
+    await expect(page.locator("p.note")).toHaveText([EMPTY]);
+    await expect(page.locator("table")).toHaveCount(0);
+    await expect(page.locator("main").getByRole("status")).toHaveCount(0);
+    await expect(page.locator("main").getByRole("alert")).toHaveCount(0);
+  });
+
+  test("the skipped-files notice sits under the panel head, above the empty line", async ({
+    page,
+  }) => {
+    const bad = [
+      "vanoostrum/alpha/sessions/bad-json/metadata.json",
+      "vanoostrum/beta/sessions/bad-shape/metadata.json",
+    ];
+    stub.scenario = {
+      ...DEFAULT,
+      pages: [[...DEFAULT.pages[0], ...bad]],
+      files: {
+        ...DEFAULT.files,
+        [bad[0]]: "not json",
+        [bad[1]]: JSON.stringify({ repo: "vanoostrum/beta" }),
+      },
+    };
+    const { url } = await start();
+    await page.goto(`${url}/versions`);
+    await expectHead(page);
+    const notice = page.locator(".panel-head + [role=status]");
+    await expect(notice).toContainText(
+      "2 session files could not be read and are not counted:",
+    );
+    await expect(notice.locator("li")).toHaveText(bad);
+    await expect(page.locator("[role=status] + p.note")).toHaveText(EMPTY);
+  });
+
+  test("a failed bucket read shows the error under the panel head, with no grid and no note, and is not kept", async ({
+    page,
+  }) => {
+    stub.scenario = { ...DEFAULT, listStatus: 403 };
+    const { url } = await start();
+    await page.goto(`${url}/versions`);
+    await expectHead(page);
+    await expect(page.locator(".panel-head + [role=alert]")).toHaveText(
+      `Could not read the transcript bucket: 403 Forbidden. ${NO_NUMBERS}`,
+    );
+    await expect(page.locator("table")).toHaveCount(0);
+    await expect(page.locator("p.note")).toHaveCount(0);
+
+    stub.scenario = DEFAULT;
+    await page.reload();
+    await expect(page.locator("main").getByRole("alert")).toHaveCount(0);
+    await expect(page.locator("p.note")).toHaveText([EMPTY]);
+  });
+
+  test("a failed Linear read shows the error, and the next request reads again", async ({
+    page,
+  }) => {
+    stub.scenario = { ...DEFAULT, linearStatus: 500 };
+    const { url } = await start();
+    await page.goto(`${url}/versions`);
+    await expectHead(page);
+    await expect(page.locator(".panel-head + [role=alert]")).toHaveText(
+      `Could not read Linear: 500 Internal Server Error. ${NO_NUMBERS}`,
+    );
+    await expect(page.locator("table")).toHaveCount(0);
+    await expect(page.locator("p.note")).toHaveCount(0);
+
+    const linearReads = stub.reads("linear").length;
+    stub.scenario = DEFAULT;
+    await page.reload();
+    await expect(page.locator("main").getByRole("alert")).toHaveCount(0);
+    await expect(page.locator("p.note")).toHaveText([EMPTY]);
+    expect(stub.reads("linear").length).toBeGreaterThan(linearReads);
   });
 });

@@ -10,7 +10,6 @@ import { MAX_SHARE_TIME_ZONE, maxShare } from "@/lib/max-share";
 import { projectGrid } from "@/lib/project-grid";
 import { projectPath, projects } from "@/lib/projects";
 import { ReadError } from "@/lib/read-error";
-import { readAtLabel } from "@/lib/read-time";
 import { NO_REPO } from "@/lib/session-metadata";
 import { shadeBy } from "@/lib/shade";
 import { ReadErrorNotice, SkippedFilesNotice } from "../read-notices";
@@ -54,7 +53,6 @@ const loadProject = cache(async (repo: string) => {
   );
   return {
     settings,
-    readAt: read.readAt,
     unreadable,
     project: rows[index],
     share: maxShare(rows, settings.maxPlanEur)[index],
@@ -102,7 +100,7 @@ export async function ProjectPage({
   );
   if (data instanceof ReadError)
     return frame(repoName(repo), <ReadErrorNotice error={data} />);
-  const { settings, readAt, unreadable, project, share, grid } = data;
+  const { settings, unreadable, project, share, grid } = data;
   const missing = project.missingModels;
   const n = project.tickets;
   const month = new Intl.DateTimeFormat("en-US", {
@@ -153,17 +151,14 @@ export async function ProjectPage({
       </div>
       <section className="panel" aria-labelledby="grid-title">
         <div className="panel-head">
-          <div className="title">
-            <h1 id="grid-title">
-              {project.name}{" "}
-              <span className="sub">
-                {project.repository === null ? "" : `${project.repository} `}/
-                tickets × phases · each cell: cost, then craft working time ·
-                shade = {shade === "cost" ? "cost" : "craft time"}
-              </span>
-            </h1>
-            <span className="read-at">{readAtLabel(readAt)}</span>
-          </div>
+          <h1 id="grid-title">
+            {project.name}{" "}
+            <span className="sub">
+              {project.repository === null ? "" : `${project.repository} `}/
+              tickets × phases · each cell: cost, then craft working time ·
+              shade = {shade === "cost" ? "cost" : "craft time"}
+            </span>
+          </h1>
           {project.repository !== null && project.linearUrl !== null && (
             <a className="primary" href={project.linearUrl}>
               Open in Linear

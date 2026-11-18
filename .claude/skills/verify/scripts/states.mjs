@@ -1,6 +1,7 @@
-// Open the Projects page on CONSOLE_DATA=live in each of its states, against
-// the synthetic stub from e2e/live-stub.ts, and save each app screenshot next
-// to the gallery page of that state. Needs a built app (`pnpm build`).
+// Open the Projects page and the Craft versions page on CONSOLE_DATA=live in
+// each state, against the synthetic stub from e2e/live-stub.ts, and save each
+// app screenshot next to the gallery page of that state. The stub sessions have
+// no segments, so /versions shows its empty line in the default state. Needs a built app (`pnpm build`).
 // Usage: node states.mjs <evidence dir>
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -33,13 +34,56 @@ const bad = [
   "vanoostrum/nap-time/sessions/a71e09b4-3c2d-5f68-8e1b-04c9d7f25a13/metadata.json",
 ];
 
+// Per state: the stub answers, and per page its gallery page and the element it must show once.
 const STATES = [
-  { state: "default", scenario: normal, check: ".read-at" },
-  { state: "empty", scenario: scenario([], []), check: "td.empty-row" },
+  {
+    state: "default",
+    scenario: normal,
+    pages: [
+      { feature: "projects", path: "/", gallery: "default", check: "table" },
+      {
+        feature: "craft-versions",
+        path: "/versions",
+        gallery: "empty",
+        check: "p.note",
+      },
+    ],
+  },
+  {
+    state: "empty",
+    scenario: scenario([], []),
+    pages: [
+      {
+        feature: "projects",
+        path: "/",
+        gallery: "empty",
+        check: "td.empty-row",
+      },
+      {
+        feature: "craft-versions",
+        path: "/versions",
+        gallery: "empty",
+        check: "p.note",
+      },
+    ],
+  },
   {
     state: "error",
     scenario: { ...normal, listStatus: 403 },
-    check: ".notice.error",
+    pages: [
+      {
+        feature: "projects",
+        path: "/",
+        gallery: "error",
+        check: ".notice.error",
+      },
+      {
+        feature: "craft-versions",
+        path: "/versions",
+        gallery: "error",
+        check: ".notice.error",
+      },
+    ],
   },
   {
     state: "skipped-files",
@@ -48,7 +92,20 @@ const STATES = [
       pages: [[...normal.pages[0], ...bad]],
       files: { ...normal.files, [bad[0]]: "{", [bad[1]]: '{"repo": 1}' },
     },
-    check: ".notice[role=status]",
+    pages: [
+      {
+        feature: "projects",
+        path: "/",
+        gallery: "skipped-files",
+        check: ".notice[role=status]",
+      },
+      {
+        feature: "craft-versions",
+        path: "/versions",
+        gallery: "skipped-files",
+        check: ".notice[role=status]",
+      },
+    ],
   },
 ];
 
@@ -57,48 +114,60 @@ await stub.start();
 const browser = await chromium.launch();
 const failures = [];
 try {
-  for (const { state, scenario: answers, check } of STATES) {
-    const dir = join(evidence, `projects-${state}`);
-    mkdirSync(dir, { recursive: true });
+  for (const { state, scenario: answers, pages } of STATES) {
     stub.scenario = answers;
     const app = await startLiveApp(stub);
-    const log = [];
     try {
-      for (const [platform, viewport] of Object.entries(PLATFORMS)) {
-        const tab = await browser.newPage({ viewport });
-        const response = await tab.goto(app.url);
-        log.push(`GET / (${state}, ${platform}) -> ${response.status()}`);
-        const main = (await tab.locator("main").innerText()).trim();
-        log.push(`main text:\n${main}`);
-        if ((await tab.locator(check).count()) !== 1)
-          failures.push(`${state} on ${platform}: no ${check}`);
-        const scroll = await tab.evaluate(
-          () =>
-            document.documentElement.scrollWidth -
-            document.documentElement.clientWidth,
-        );
-        if (scroll > 0)
-          failures.push(`${state} scrolls sideways on ${platform}`);
-        await tab.screenshot({
-          path: join(dir, `app_projects_${state}_${platform}.png`),
-          fullPage: true,
-        });
-        await tab.goto(
-          pathToFileURL(resolve(`design/pages/projects/${state}.html`)).href,
-        );
-        await tab.addStyleTag({ content: FONT_FACES });
-        await tab.evaluate(() => document.fonts.ready);
-        await tab.screenshot({
-          path: join(dir, `gallery_projects_${state}_${platform}.png`),
-          fullPage: true,
-        });
-        await tab.close();
+      for (const { feature, path, gallery, check } of pages) {
+        const dir = join(evidence, `${feature}-${state}`);
+        mkdirSync(dir, { recursive: true });
+        const log = [];
+        for (const [platform, viewport] of Object.entries(PLATFORMS)) {
+          const tab = await browser.newPage({ viewport });
+          const response = await tab.goto(`${app.url}${path}`);
+          log.push(
+            `GET ${path} (${state}, ${platform}) -> ${response.status()}`,
+          );
+          const main = (await tab.locator("main").innerText()).trim();
+          log.push(`main text:\n${main}`);
+          if ((await tab.locator(check).count()) !== 1)
+            failures.push(`${path} ${state} on ${platform}: no ${check}`);
+          if (
+            (await tab.locator(".read-at").count()) > 0 ||
+            main.includes("Read at")
+          )
+            failures.push(
+              `${path} ${state} on ${platform}: has a "Read at" line`,
+            );
+          const scroll = await tab.evaluate(
+            () =>
+              document.documentElement.scrollWidth -
+              document.documentElement.clientWidth,
+          );
+          if (scroll > 0)
+            failures.push(`${path} ${state} scrolls sideways on ${platform}`);
+          await tab.screenshot({
+            path: join(dir, `app_${feature}_${state}_${platform}.png`),
+            fullPage: true,
+          });
+          await tab.goto(
+            pathToFileURL(resolve(`design/pages/${feature}/${gallery}.html`))
+              .href,
+          );
+          await tab.addStyleTag({ content: FONT_FACES });
+          await tab.evaluate(() => document.fonts.ready);
+          await tab.screenshot({
+            path: join(dir, `gallery_${feature}_${gallery}_${platform}.png`),
+            fullPage: true,
+          });
+          await tab.close();
+        }
+        writeFileSync(join(dir, "transcript.txt"), log.join("\n") + "\n");
+        console.log(`== ${feature}-${state}\n${log.join("\n")}`);
       }
     } finally {
       app.stop();
     }
-    writeFileSync(join(dir, "transcript.txt"), log.join("\n") + "\n");
-    console.log(`== projects-${state}\n${log.join("\n")}`);
   }
 } finally {
   await browser.close();

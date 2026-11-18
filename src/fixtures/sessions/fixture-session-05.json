@@ -18,7 +18,7 @@
         }
       },
       "subagents": [],
-      "craft_version": "2.8.2",
+      "craft_version": "2.8.1",
       "model": "claude-sonnet-5-5",
       "work_seconds": 600,
       "wait_seconds": 7200
@@ -37,7 +37,7 @@
         }
       },
       "subagents": [],
-      "craft_version": "2.8.2",
+      "craft_version": "2.8.1",
       "model": "claude-opus-5-5",
       "work_seconds": 780,
       "wait_seconds": 9000
