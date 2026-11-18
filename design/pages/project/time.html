@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NapTime · Craft Console</title>
+<link rel="stylesheet" href="../../gallery.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">craft://console</div>
+  <nav class="tabs" aria-label="Main">
+    <a href="../projects/default.html" aria-current="page">Projects</a>
+    <a href="../craft-versions/default.html">Craft versions</a>
+  </nav>
+  <div class="tools">
+    <span class="label" id="shade-label">Shade by</span>
+    <div class="toggle" role="group" aria-labelledby="shade-label">
+      <button type="button" aria-pressed="false">€ cost</button>
+      <button type="button" aria-pressed="true">craft time</button>
+    </div>
+  </div>
+</header>
+<main>
+  <p class="crumbs"><a href="../projects/default.html">Projects</a> / NapTime</p>
+  <div class="summary" aria-label="NapTime totals">
+    <div class="tile"><div class="k">Cost</div><div class="v">€192.30</div><small>11 tickets · €17.48 a ticket</small></div>
+    <div class="tile"><div class="k">Craft time</div><div class="v">5h02m</div><small>27m a ticket</small></div>
+    <div class="tile"><div class="k">Waiting on you</div><div class="v wait">196h</div><small>time between craft's question and your answer</small></div>
+    <div class="tile"><div class="k">Max share · Nov</div><div class="v est">≈ €51</div><small>estimate, of your €93 Max plan</small></div>
+  </div>
+  <section class="panel" aria-labelledby="grid-title">
+    <div class="panel-head">
+      <h1 id="grid-title">NapTime <span class="sub">vanoostrum/nap-time / tickets × phases · each cell: cost, then craft working time · shade = craft time</span></h1>
+      <a class="primary" href="https://linear.app/example/project/sample">Open in Linear</a>
+    </div>
+    <table class="grid">
+      <thead>
+        <tr><th>Ticket</th><th>plan</th><th>spec</th><th>design</th><th>build</th><th>review</th><th>merge</th><th>other</th><th class="sep">cost</th><th>craft time</th><th>waiting on you</th></tr>
+      </thead>
+      <tbody>
+<tr class="group"><td><button type="button" class="fold" aria-expanded="true" aria-label="Fold Plan: Sample app v1"></button>Plan: Sample app v1</td><td class="cell"><div>€26.10</div><div>29m</div></td><td class="cell"><div>€62.20</div><div>1h11m</div></td><td class="cell"><div>€6.00</div><div>9m</div></td><td class="cell"><div>€14.90</div><div>49m</div></td><td class="cell"><div>€7.30</div><div>16m</div></td><td class="cell"><div>€2.30</div><div>4m</div></td><td class="cell"><div>€4.20</div><div>6m</div></td><td class="tot sep">€123.00</td><td class="tot">3h04m</td><td class="wait">95h</td></tr>
+<tr class="in-plan"><td><span class="key">NAP-100</span>Plan: Sample app v1<span class="state">Done</span></td><td class="cell c5"><div>€26.10</div><div>29m</div></td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="cell c2"><div>€4.20</div><div>6m</div></td><td class="tot sep">€30.30</td><td class="tot">35m</td><td class="wait">13h</td></tr>
+<tr class="milestone"><td><button type="button" class="fold" aria-expanded="true" aria-label="Fold Sample app v1: Record"></button>Sample app v1: Record</td><td class="empty">·</td><td class="cell"><div>€27.40</div><div>34m</div></td><td class="cell"><div>€1.10</div><div>2m</div></td><td class="cell"><div>€14.90</div><div>49m</div></td><td class="cell"><div>€7.30</div><div>16m</div></td><td class="cell"><div>€2.30</div><div>4m</div></td><td class="empty">·</td><td class="tot sep">€53.00</td><td class="tot">1h45m</td><td class="wait">75h</td></tr>
+<tr class="in-milestone"><td><span class="key">NAP-101</span>Add a profile<span class="state">Done</span></td><td class="empty">·</td><td class="cell c2"><div>€6.80</div><div>9m</div></td><td class="cell c1"><div>€1.10</div><div>2m</div></td><td class="cell c4"><div>€4.90</div><div>18m</div></td><td class="cell c2"><div>€3.20</div><div>7m</div></td><td class="cell c1"><div>€1.10</div><div>2m</div></td><td class="empty">·</td><td class="tot sep">€17.10</td><td class="tot">38m</td><td class="wait">20h</td></tr>
+<tr class="in-milestone"><td><span class="key">NAP-102</span>Record an entry<span class="state">Done</span></td><td class="empty">·</td><td class="cell c2"><div>€8.20</div><div>11m</div></td><td class="empty">·</td><td class="cell c4"><div>€6.30</div><div>22m</div></td><td class="cell c2"><div>€4.10</div><div>9m</div></td><td class="cell c1"><div>€1.20</div><div>2m</div></td><td class="empty">·</td><td class="tot sep">€19.80</td><td class="tot">44m</td><td class="wait">11h</td></tr>
+<tr class="in-milestone"><td><span class="key">NAP-103</span>Edit and remove entries<span class="state">Building</span></td><td class="empty">·</td><td class="cell c3"><div>€12.40</div><div>14m</div></td><td class="empty">·</td><td class="cell c2"><div>€3.70</div><div>9m</div></td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="tot sep">€16.10</td><td class="tot">23m</td><td class="wait">43h</td></tr>
+<tr class="milestone"><td><button type="button" class="fold" aria-expanded="false" aria-label="Open Sample app v1: Reports"></button>Sample app v1: Reports</td><td class="empty">·</td><td class="cell"><div>€34.80</div><div>37m</div></td><td class="cell"><div>€4.90</div><div>7m</div></td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="tot sep">€39.70</td><td class="tot">44m</td><td class="wait">8h20m</td></tr>
+<tr class="group"><td><button type="button" class="fold" aria-expanded="false" aria-label="Open Plan: Sample tooling"></button>Plan: Sample tooling</td><td class="cell"><div>€7.00</div><div>11m</div></td><td class="cell"><div>€14.50</div><div>22m</div></td><td class="empty">·</td><td class="cell"><div>€11.30</div><div>22m</div></td><td class="cell"><div>€9.40</div><div>21m</div></td><td class="cell"><div>€5.90</div><div>3m</div></td><td class="cell"><div>€1.90</div><div>1m</div></td><td class="tot sep">€50.00</td><td class="tot">1h20m</td><td class="wait">98h</td></tr>
+<tr class="group"><td><button type="button" class="fold" aria-expanded="true" aria-label="Fold Single tickets"></button>Single tickets</td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="cell"><div>€5.80</div><div>20m</div></td><td class="cell"><div>€3.40</div><div>4m</div></td><td class="cell"><div>€2.30</div><div>2m</div></td><td class="cell"><div>€0.90</div><div>1m</div></td><td class="tot sep">€12.40</td><td class="tot">27m</td><td class="wait">1h40m</td></tr>
+<tr class="in-plan"><td><span class="key">NAP-110</span>Pin the build tool version<span class="state">Done</span></td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="cell c3"><div>€3.70</div><div>14m</div></td><td class="cell c1"><div>€2.10</div><div>2m</div></td><td class="cell c1"><div>€2.00</div><div>1m</div></td><td class="cell c1"><div>€0.20</div><div>0m</div></td><td class="tot sep">€8.00</td><td class="tot">17m</td><td class="wait">36m</td></tr>
+<tr class="in-plan"><td><span class="key">NAP-111</span>Keep the config file unchanged<span class="state">Done</span></td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="cell c2"><div>€2.10</div><div>6m</div></td><td class="cell c1"><div>€1.30</div><div>2m</div></td><td class="cell c1"><div>€0.30</div><div>0m</div></td><td class="cell c1"><div>€0.70</div><div>1m</div></td><td class="tot sep">€4.40</td><td class="tot">10m</td><td class="wait">1h04m</td></tr>
+<tr class="group no-ticket"><td>No ticket</td><td class="empty">·</td><td class="cell c2"><div>€5.40</div><div>10m</div></td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="cell c1"><div>€1.50</div><div>1m</div></td><td class="tot sep">€6.90</td><td class="tot">11m</td><td class="wait">6m</td></tr>
+<tr class="total"><td>Total</td><td class="cell"><div>€33.10</div><div>40m</div></td><td class="cell"><div>€82.10</div><div>1h43m</div></td><td class="cell"><div>€6.00</div><div>9m</div></td><td class="cell"><div>€32.00</div><div>1h31m</div></td><td class="cell"><div>€20.10</div><div>41m</div></td><td class="cell"><div>€10.50</div><div>8m</div></td><td class="cell"><div>€8.50</div><div>9m</div></td><td class="tot sep">€192.30</td><td class="tot">5h02m</td><td class="wait">196h</td></tr>
+      </tbody>
+    </table>
+    <p class="note">A plan holds its plan ticket, with the brainstorm and setup sessions of its brief, and its tickets by milestone. "No ticket" is work that names no ticket, such as a craft:next run on its own, and brief sessions whose plan does not exist yet.</p>
+  </section>
+</main>
+</body>
+</html>

@@ -23,6 +23,7 @@ import s21 from "./sessions/fixture-session-21.json";
 import s22 from "./sessions/fixture-session-22.json";
 import s23 from "./sessions/fixture-session-23.json";
 import s24 from "./sessions/fixture-session-24.json";
+import s25 from "./sessions/fixture-session-25.json";
 import tickets from "./tickets.json";
 
 export const sessionFiles: unknown[] = [
@@ -50,5 +51,6 @@ export const sessionFiles: unknown[] = [
   s22,
   s23,
   s24,
+  s25,
 ];
 export const ticketFile: unknown = tickets;

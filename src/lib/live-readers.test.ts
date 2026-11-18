@@ -10,16 +10,21 @@ beforeAll(() => stub.start());
 afterAll(() => stub.stop());
 
 describe("live TicketReader", () => {
-  it("returns each field from Linear, with the key asked for", async () => {
+  it("returns each field from Linear, with the key asked for, and the brief a plan ticket links", async () => {
     stub.scenario = {
       pages: [[]],
       files: {},
       tickets: {
         "OLD-7": {
           identifier: "NEW-7",
-          title: "Synthetic title",
+          title: "Plan: Synthetic title",
+          description:
+            "See [Brief: Synthetic](https://linear.app/example/document/brief-synthetic-0123456789ab).",
           state: { name: "In Review", type: "started" },
-          project: { name: "Synthetic project" },
+          project: {
+            name: "Synthetic project",
+            url: "https://linear.app/example/project/synthetic-other",
+          },
           projectMilestone: { name: "Synthetic milestone" },
           parent: { identifier: "NEW-1" },
         },
@@ -33,12 +38,15 @@ describe("live TicketReader", () => {
     expect(await readers.tickets.tickets(["OLD-7", "NEW-8"])).toEqual([
       {
         key: "OLD-7",
-        title: "Synthetic title",
+        title: "Plan: Synthetic title",
         state: "In Review",
         stateType: "started",
         project: "Synthetic project",
+        projectUrl: "https://linear.app/example/project/synthetic-other",
         milestone: "Synthetic milestone",
         parent: "NEW-1",
+        brief:
+          "https://linear.app/example/document/brief-synthetic-0123456789ab",
       },
       {
         key: "NEW-8",
@@ -46,8 +54,10 @@ describe("live TicketReader", () => {
         state: "Done",
         stateType: "completed",
         project: "Synthetic project",
+        projectUrl: "https://linear.app/example/project/synthetic",
         milestone: null,
         parent: null,
+        brief: null,
       },
     ]);
   });

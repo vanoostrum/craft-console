@@ -1,3 +1,4 @@
+import { attributedSegments, type AttributedSegment } from "./attribution";
 import { PHASES, phaseOf, segmentCost, type Phase } from "./cost";
 import { monthOf, segmentMonth } from "./max-share";
 import type { Ticket } from "./readers";
@@ -11,6 +12,8 @@ export type Project = {
   name: string;
   /** `<owner>/<repo>`, or null for the sessions outside a repository. */
   repository: string | null;
+  /** The URL of the Linear project that names it, or null when its name is the repository. */
+  linearUrl: string | null;
   /** How many keys its sessions name that Linear knows. */
   tickets: number;
   /** How many sessions the repository has. */
@@ -29,6 +32,10 @@ export type Project = {
 };
 
 export const NO_REPOSITORY = "No repository";
+
+/** The path of a project page: `/projects/<owner>/<repo>`, or `/projects/no-repo` for the sessions outside a repository. */
+export const projectPath = (repository: string | null) =>
+  `/projects/${repository ?? NO_REPO}`;
 
 /** All ticket keys that the sessions name, each once. */
 export function ticketKeys(sessions: readonly SessionMetadata[]): string[] {
@@ -54,7 +61,9 @@ const byText = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 
 /**
  * The Projects overview rows, in display order: by cost, highest first, then by
- * name, then by repository, and the sessions outside a repository last.
+ * name, then by repository, and the sessions outside a repository last. The
+ * numbers count each segment where `attributedSegments` puts it; the session
+ * and ticket counts count where the sessions ran.
  */
 export function projects(
   sessions: readonly SessionMetadata[],
@@ -66,6 +75,9 @@ export function projects(
   const groups = new Map<string, SessionMetadata[]>();
   for (const session of sessions)
     groups.set(session.repo, [...(groups.get(session.repo) ?? []), session]);
+  const segments = new Map<string, AttributedSegment[]>();
+  for (const s of attributedSegments(sessions, found))
+    segments.set(s.repo, [...(segments.get(s.repo) ?? []), s]);
 
   const rows = [...groups].map(([repo, group]): Project => {
     const keys = new Set(
@@ -79,32 +91,33 @@ export function projects(
     let work = 0;
     let wait = 0;
     let timed = false;
-    for (const session of group)
-      for (const segment of session.segments) {
-        const phase = phaseOf(segment.step);
-        const c = segmentCost(segment);
-        c.missing.forEach((model) => missing.add(model));
-        cost += c.eur;
-        phaseCost[phase] += c.eur;
-        if (segmentMonth(segment, session.uploaded_at) === month)
-          monthCost += c.eur;
-        if (
-          segment.work_seconds !== undefined ||
-          segment.wait_seconds !== undefined
-        )
-          timed = true;
-        work += segment.work_seconds ?? 0;
-        wait += segment.wait_seconds ?? 0;
-        phaseWork[phase] += segment.work_seconds ?? 0;
-      }
+    for (const { segment, session } of segments.get(repo) ?? []) {
+      const phase = phaseOf(segment.step);
+      const c = segmentCost(segment);
+      c.missing.forEach((model) => missing.add(model));
+      cost += c.eur;
+      phaseCost[phase] += c.eur;
+      if (segmentMonth(segment, session.uploaded_at) === month)
+        monthCost += c.eur;
+      if (
+        segment.work_seconds !== undefined ||
+        segment.wait_seconds !== undefined
+      )
+        timed = true;
+      work += segment.work_seconds ?? 0;
+      wait += segment.wait_seconds ?? 0;
+      phaseWork[phase] += segment.work_seconds ?? 0;
+    }
     const repository = repo === NO_REPO ? null : repo;
+    const named = [...keys].map((key) => tickets.get(key)!);
+    const name =
+      repository === null ? NO_REPOSITORY : (projectName(named) ?? repository);
     return {
-      name:
-        repository === null
-          ? NO_REPOSITORY
-          : (projectName([...keys].map((key) => tickets.get(key)!)) ??
-            repository),
+      name,
       repository,
+      linearUrl:
+        named.find((t) => t.project === name && t.projectUrl !== null)
+          ?.projectUrl ?? null,
       tickets: keys.size,
       sessions: group.length,
       cost,

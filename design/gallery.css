@@ -240,4 +240,4 @@ tr.unknown td { color: var(--muted); }
 .notice ul { margin: 6px 0 0; padding-left: 18px; font-family: var(--mono); font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
 .notice.error { border-left-color: var(--error); border-bottom: 0; }
 .notice.error strong { color: var(--error); }
-td.empty { font-family: var(--sans); color: var(--muted); text-align: left; padding: 24px 14px; }
+td.empty-row { font-family: var(--sans); color: var(--muted); text-align: left; padding: 24px 14px; }

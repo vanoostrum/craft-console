@@ -47,7 +47,7 @@ const skipped = await tab
 // Each overview row: [repository or "No repository", sessions, tickets].
 const rows = await tab.locator("tbody tr").evaluateAll((trs) =>
   trs
-    .filter((tr) => !tr.querySelector("td.empty"))
+    .filter((tr) => !tr.querySelector("td.empty-row"))
     .map((tr) => {
       const cells = [...tr.querySelectorAll("td")];
       const name =

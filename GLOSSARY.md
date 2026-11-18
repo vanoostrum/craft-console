@@ -36,8 +36,14 @@ _Avoid_: Issue
 One repository that runs on craft, such as NapTime in `vanoostrum/nap-time`. Its name is the Linear project that holds most of its tickets, or the repository name when no ticket has a Linear project. The levels below it are plan, milestone, ticket, and phase.
 _Avoid_: Repo (a project is shown by name; the repository is its identity)
 
+**Project page**:
+The page of one project, at `/projects/<owner>/<repo>`: its totals, and the tickets × phases grid by plan, milestone, and ticket.
+
 **Plan**:
-A plan ticket from `craft:plan`, titled `Plan: <name>`. Its tickets are its sub-issues. The cost of the brainstorm and setup sessions of the brief that the plan ticket links counts toward the plan ticket.
+A plan ticket from `craft:plan`, titled `Plan: <name>`. Its tickets are its sub-issues: a ticket is in a plan only when its parent's title starts with "Plan: ". The cost of the brainstorm and setup sessions of the brief that the plan ticket links counts toward the plan ticket.
+
+**Brief**:
+The Linear document `Brief: <name>` that `craft:brainstorm` or `craft:setup` writes. A plan ticket links it in its description. A segment and a plan ticket name the same brief when the document id at the end of their URLs is the same.
 
 **Milestone**:
 The Linear milestone `<plan name>: <milestone>` of a ticket. A plan shows its milestones only when it has more than one.
@@ -46,14 +52,14 @@ The Linear milestone `<plan name>: <milestone>` of a ticket. A plan shows its mi
 The tickets of a project that belong to no plan.
 
 **No ticket**:
-The work of a project that names no ticket, such as `craft:next`, and brief sessions whose plan does not exist yet.
+The work of a project that names no ticket, such as a `craft:next` run on its own, and brief sessions whose plan does not exist yet.
 
 **Phase**:
 What a segment did: `plan`, `spec`, `design`, `build`, `review`, `merge`, or `other`. A segment of `craft:plan`, `craft:spec`, `craft:design`, `craft:build`, `craft:review`, or `craft:merge` has the phase of that name. Every other segment, such as `craft:brainstorm`, `craft:setup`, `craft:next`, or a segment with no step, has the phase `other`.
 _Avoid_: Step (a step is the craft skill; the phase is the column)
 
 **Segment**:
-The part of a session from one craft step call to the next, with its own ticket, tokens, and times. `metadata.json` lists the segments of a session.
+The part of a session from one craft step call to the next, with its own ticket, tokens, and times. `metadata.json` lists the segments of a session. In a spec session, a change of the current ticket also starts a segment.
 
 **Cost**:
 What the tokens of a segment cost at the Anthropic API list prices in the price table, in euros. Every session is priced with the current price table, so the same work always has the same cost.

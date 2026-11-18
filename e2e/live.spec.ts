@@ -17,7 +17,7 @@ test.describe.configure({ mode: "serial" });
 const NO_NUMBERS =
   "The page shows no numbers until the transcript bucket and Linear can both be read.";
 
-const DEFAULT = scenario(
+const BASE = scenario(
   [
     session("vanoostrum/alpha", "a1", ["ALP-1"]),
     session("vanoostrum/alpha", "a2", ["ALP-1", "ALP-2"]),
@@ -27,6 +27,20 @@ const DEFAULT = scenario(
   ],
   ["ALP-1", "ALP-2", "ALP-3", "BET-1"],
 );
+// ALP-1 is a plan ticket that links a brief, and the parent of ALP-2.
+const DEFAULT = {
+  ...BASE,
+  tickets: {
+    ...BASE.tickets,
+    "ALP-1": {
+      ...ticket("ALP-1"),
+      title: "Plan: Synthetic plan",
+      description:
+        "See [Brief: Synthetic](https://linear.app/example/document/brief-synthetic-0123456789ab).",
+    },
+    "ALP-2": { ...ticket("ALP-2"), parent: { identifier: "ALP-1" } },
+  },
+};
 const DEFAULT_ROWS = [
   ["vanoostrum/alpha", "3", "3"],
   ["vanoostrum/beta", "1", "1"],
@@ -60,7 +74,7 @@ async function rows(page: Page): Promise<string[][]> {
   return page.locator("tbody tr").evaluateAll((trs) =>
     trs.map((tr) => {
       const cells = [...tr.querySelectorAll("td")];
-      if (cells[0].classList.contains("empty"))
+      if (cells[0].classList.contains("empty-row"))
         return [cells[0].textContent!.trim()];
       const name =
         cells[0].querySelector(".repo")?.textContent ??
@@ -174,7 +188,7 @@ test("an empty bucket shows the table header and the empty row", async ({
   expect(await rows(page)).toEqual([
     ["No sessions in the transcript bucket yet."],
   ]);
-  await expect(page.locator("td.empty")).toHaveAttribute("colspan", "9");
+  await expect(page.locator("td.empty-row")).toHaveAttribute("colspan", "9");
   await expect(page.locator(".read-at")).toHaveText(/^Read at \d\d:\d\d$/);
 });
 
@@ -382,4 +396,96 @@ test("an error shows no credential, on the page or in the server log", async ({
   expect(await page.content()).not.toContain(MARKER);
   expect(live.log()).not.toContain(MARKER);
   expect(stub.reads("gcs")).toHaveLength(0);
+});
+
+test.describe("project page", () => {
+  test("a stub repository opens with its heading, Open in Linear, the read time, and only a Total row", async ({
+    page,
+  }) => {
+    const { url } = await start();
+    const before = new Date();
+    const response = await page.goto(`${url}/projects/vanoostrum/alpha`);
+    const after = new Date();
+    expect(response?.status()).toBe(200);
+    await expect(page.locator("main h1")).toHaveText(
+      /^Synthetic project vanoostrum\/alpha \/ tickets × phases/,
+    );
+    await expect(
+      page.getByRole("link", { name: "Open in Linear" }),
+    ).toHaveAttribute("href", "https://linear.app/example/project/synthetic");
+    const readAt = (await page.locator(".read-at").textContent())!;
+    expect([amsterdam(before), amsterdam(after)]).toContain(readAt);
+    // Stub sessions have no segments: the grid has only Total.
+    const total = page.locator("table.grid tbody tr");
+    await expect(total).toHaveCount(1);
+    await expect(total.locator("td").first()).toHaveText("Total");
+    await expect(total.locator("td.tot")).toHaveText(["€0.00", "—"]);
+    await expect(page.locator("main").getByRole("status")).toHaveCount(0);
+  });
+
+  test("an unknown repository is a 404 page", async ({ page }) => {
+    const { url } = await start();
+    const response = await page.goto(`${url}/projects/vanoostrum/unknown`);
+    expect(response?.status()).toBe(404);
+    await expect(page.locator("main h1")).toContainText(
+      "No sessions for vanoostrum/unknown",
+    );
+  });
+
+  test("asks Linear for a parent ticket that no session names, after the tickets the sessions name", async ({
+    page,
+  }) => {
+    stub.scenario = {
+      ...DEFAULT,
+      tickets: {
+        ...DEFAULT.tickets,
+        "ALP-3": { ...ticket("ALP-3"), parent: { identifier: "ALP-9" } },
+        "ALP-9": ticket("ALP-9"),
+      },
+    };
+    const { url } = await start();
+    await page.goto(`${url}/projects/vanoostrum/alpha`);
+    const keys = stub.reads("linear").map((read) => read.keys);
+    expect(keys.at(-1)).toEqual(["ALP-9"]);
+    expect(keys.slice(0, -1).flat()).not.toContain("ALP-9");
+    await page.goto(url);
+    expect(await rows(page)).toEqual(DEFAULT_ROWS);
+  });
+
+  test("a failed read shows the top bar, the crumbs, and the error, and no numbers", async ({
+    page,
+  }) => {
+    stub.scenario = { ...DEFAULT, linearStatus: 500 };
+    const { url } = await start();
+    const response = await page.goto(`${url}/projects/vanoostrum/alpha`);
+    expect(response?.status()).toBe(200);
+    await expect(page.locator(".topbar")).toBeVisible();
+    await expect(page.locator(".crumbs")).toHaveText(
+      "Projects / vanoostrum/alpha",
+    );
+    await expect(page.locator("main").getByRole("alert")).toHaveText(
+      `Could not read Linear: 500 Internal Server Error. ${NO_NUMBERS}`,
+    );
+    await expect(page.locator(".summary")).toHaveCount(0);
+    await expect(page.locator("table")).toHaveCount(0);
+    await expect(page.locator(".read-at")).toHaveCount(0);
+  });
+
+  test("the skipped-files notice shows on the project page as on /", async ({
+    page,
+  }) => {
+    const bad = "vanoostrum/alpha/sessions/bad-json/metadata.json";
+    stub.scenario = {
+      ...DEFAULT,
+      pages: [[...DEFAULT.pages[0], bad]],
+      files: { ...DEFAULT.files, [bad]: "not json" },
+    };
+    const { url } = await start();
+    await page.goto(`${url}/projects/no-repo`);
+    const notice = page.locator("main").getByRole("status");
+    await expect(notice).toContainText(
+      "1 session file could not be read and is not counted:",
+    );
+    await expect(notice.locator("li")).toHaveText([bad]);
+  });
 });

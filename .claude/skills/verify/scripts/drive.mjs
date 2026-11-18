@@ -27,6 +27,31 @@ const PAGES = [
     shade: "time",
   },
   {
+    feature: "project",
+    path: "/projects/vanoostrum/nap-time",
+    gallery: "design/pages/project/default.html",
+    project: "vanoostrum/nap-time",
+    fold: true,
+  },
+  {
+    feature: "project-time",
+    path: "/projects/vanoostrum/nap-time?shade=time",
+    gallery: "design/pages/project/time.html",
+    project: "vanoostrum/nap-time",
+  },
+  {
+    feature: "project-no-repository",
+    path: "/projects/no-repo",
+    gallery: "design/pages/project/no-repository.html",
+    project: "no-repo",
+  },
+  {
+    feature: "project-not-found",
+    path: "/projects/vanoostrum/unknown",
+    gallery: "design/pages/project/not-found.html",
+    status: 404,
+  },
+  {
     feature: "craft-versions",
     path: "/versions",
     gallery: "design/pages/craft-versions/default.html",
@@ -95,24 +120,46 @@ function expectedRows() {
     }
     return usd * EUR_PER_USD;
   };
+  // The brief move: a segment whose brief has the document id of a plan
+  // ticket's brief link counts in the repository where the plan ticket's
+  // segments ran (the fixtures always have them).
+  const docId = (url) =>
+    /\/document\/(?:.*-)?([0-9a-f]+)(?:[/?#]|$)/.exec(url)?.[1];
+  const planOfBrief = new Map();
+  for (const t of known.values()) {
+    const link = /\[Brief: [^\]]*\]\(<?([^)>]+)>?\)/.exec(t.description ?? "");
+    if (t.title.startsWith("Plan: ") && link) {
+      const repos = sessions
+        .filter((s) => s.segments.some((seg) => seg.ticket === t.key))
+        .map((s) => s.repo);
+      if (repos.length) planOfBrief.set(docId(link[1]), repos.sort()[0]);
+    }
+  }
+  const repoOf = (s, seg) =>
+    (seg.brief && planOfBrief.get(docId(seg.brief))) || s.repo;
+  const blank = (repo) => ({
+    repo,
+    sessions: 0,
+    keys: new Set(),
+    cost: 0,
+    month: 0,
+    missing: new Set(),
+    work: 0,
+    wait: 0,
+    timed: false,
+    phaseCost: Object.fromEntries(PHASES.map((p) => [p, 0])),
+    phaseWork: Object.fromEntries(PHASES.map((p) => [p, 0])),
+  });
   const groups = new Map();
   for (const s of sessions) {
-    const g = groups.get(s.repo) ?? {
-      repo: s.repo,
-      sessions: 0,
-      keys: new Set(),
-      cost: 0,
-      month: 0,
-      missing: new Set(),
-      work: 0,
-      wait: 0,
-      timed: false,
-      phaseCost: Object.fromEntries(PHASES.map((p) => [p, 0])),
-      phaseWork: Object.fromEntries(PHASES.map((p) => [p, 0])),
-    };
-    g.sessions += 1;
-    s.tickets.filter((k) => known.has(k)).forEach((k) => g.keys.add(k));
+    const own = groups.get(s.repo) ?? blank(s.repo);
+    own.sessions += 1;
+    s.tickets.filter((k) => known.has(k)).forEach((k) => own.keys.add(k));
+    groups.set(s.repo, own);
+  }
+  for (const s of sessions) {
     for (const seg of s.segments) {
+      const g = groups.get(repoOf(s, seg));
       let c = price(seg.tokens, g.missing);
       for (const sub of seg.subagents) c += price(sub.tokens, g.missing);
       g.cost += c;
@@ -127,7 +174,6 @@ function expectedRows() {
       g.wait += seg.wait_seconds ?? 0;
       g.phaseWork[phase(seg.step)] += seg.work_seconds ?? 0;
     }
-    groups.set(s.repo, g);
   }
   const nameOf = (g) => {
     if (g.repo === "no-repo") return "No repository";
@@ -180,6 +226,7 @@ function expectedRows() {
           : "—",
         "",
       ],
+      repo: g.repo,
       sessions: String(g.sessions),
       cost: title(g.phaseCost, "no cost"),
       time: title(g.phaseWork, "no craft time"),
@@ -218,7 +265,7 @@ try {
       const tab = await browser.newPage({ viewport });
       const response = await tab.goto(base + page.path);
       log.push(`GET ${page.path} (${platform}) -> ${response.status()}`);
-      if (response.status() !== 200)
+      if (response.status() !== (page.status ?? 200))
         failures.push(`${page.path} answered ${response.status()}`);
       const current = await tab
         .locator('nav[aria-label="Main"] [aria-current="page"]')
@@ -274,8 +321,167 @@ try {
           JSON.stringify([page.shade === "cost" ? "€ cost" : "craft time"])
         )
           failures.push(`${page.path} has the wrong Shade by link current`);
+        // Each project name links to its project page, with the shade choice.
+        const links = await tab
+          .locator("tbody td.name a")
+          .evaluateAll((as) => as.map((a) => a.getAttribute("href")));
+        const wantLinks = expectedRows().map(
+          (row) =>
+            `/projects/${row.repo}` +
+            (page.shade === "time" ? "?shade=time" : ""),
+        );
+        log.push(`project links: ${JSON.stringify(links)}`);
+        if (JSON.stringify(links) !== JSON.stringify(wantLinks))
+          failures.push(`${page.path} project links differ on ${platform}`);
+        if (platform === "desktop") {
+          const first = tab.locator("tbody td.name a").first();
+          const href = await first.getAttribute("href");
+          await first.click();
+          await tab.waitForURL((url) => url.pathname + url.search === href);
+          const heading = await tab.locator("h1").innerText();
+          log.push(
+            `click ${JSON.stringify(href)} -> heading ${JSON.stringify(heading)}`,
+          );
+          if (
+            !heading.startsWith(
+              expectedRows()[0].cells[0].replace(expectedRows()[0].repo, ""),
+            )
+          )
+            failures.push(
+              `${page.path} first project link opens the wrong page`,
+            );
+          await tab.goto(base + page.path);
+        }
         const notes = await tab.locator("p.note").allTextContents();
         log.push(`notes: ${JSON.stringify(notes)}`);
+      }
+      if (page.fold && platform === "desktop") {
+        // Fold a milestone, fold its plan, open the plan: the milestone stays folded.
+        const state = async (step) => {
+          const visible = await tab.locator("tbody tr:visible").count();
+          const expanded = await tab
+            .locator("tbody button.fold")
+            .evaluateAll((bs) =>
+              bs.map(
+                (b) =>
+                  `${b.getAttribute("aria-label")}=${b.getAttribute("aria-expanded")}`,
+              ),
+            );
+          const total = await tab.locator("tr.total td").nth(8).innerText();
+          log.push(
+            `fold: ${step}: visible rows ${visible}, Total ${total}, buttons ${JSON.stringify(expanded)}`,
+          );
+          return { visible, total, expanded };
+        };
+        const start = await state("on load");
+        await tab
+          .getByRole("button", {
+            name: "Fold Sample app v1: Reports",
+            exact: true,
+          })
+          .click();
+        const one = await state("after Fold Sample app v1: Reports");
+        await tab
+          .getByRole("button", {
+            name: "Fold Plan: Sample app v1",
+            exact: true,
+          })
+          .click();
+        const two = await state("after Fold Plan: Sample app v1");
+        await tab
+          .getByRole("button", {
+            name: "Open Plan: Sample app v1",
+            exact: true,
+          })
+          .click();
+        const three = await state("after Open Plan: Sample app v1");
+        await tab.reload();
+        const four = await state("after reload");
+        const ok =
+          start.expanded.every((e) => e.endsWith("=true")) &&
+          one.visible === start.visible - 3 &&
+          two.visible === start.visible - 11 &&
+          three.visible === one.visible &&
+          three.expanded.includes("Open Sample app v1: Reports=false") &&
+          four.visible === start.visible &&
+          four.expanded.every((e) => e.endsWith("=true")) &&
+          [one, two, three, four].every((s) => s.total === start.total);
+        if (!ok)
+          failures.push(`${page.path} folding does not behave as specified`);
+      }
+      if (page.project) {
+        const rows = await tab
+          .locator("tbody tr")
+          .evaluateAll((trs) =>
+            trs.map((tr) =>
+              [...tr.querySelectorAll("td")].map((td) =>
+                td.innerText.replace(/\s+/g, " ").trim(),
+              ),
+            ),
+          );
+        log.push(`grid rows: ${JSON.stringify(rows.map((r) => r[0]))}`);
+        const tiles = await tab.locator(".tile .v").allTextContents();
+        log.push(`tiles: ${JSON.stringify(tiles)}`);
+        const row = expectedRows().find((r) => r.repo === page.project);
+        const total = rows.at(-1);
+        const want = [
+          row.cells[2].replace(" *", ""),
+          row.cells[4],
+          row.cells[6],
+        ];
+        log.push(
+          `Total: ${JSON.stringify(total.slice(8))}, overview row: ${JSON.stringify(want)}`,
+        );
+        if (
+          total[0] !== "Total" ||
+          JSON.stringify(total.slice(8)) !== JSON.stringify(want)
+        )
+          failures.push(
+            `${page.path} Total differs from its overview row on ${platform}`,
+          );
+        if (
+          JSON.stringify(tiles) !==
+          JSON.stringify([
+            row.cells[2],
+            row.cells[4],
+            row.cells[6],
+            row.cells[7],
+          ])
+        )
+          failures.push(
+            `${page.path} tiles differ from its overview row on ${platform}`,
+          );
+        if (page.project === "vanoostrum/nap-time") {
+          const order = rows.map(
+            (r) => /^[A-Z]+-\d+/.exec(r[0])?.[0] ?? r[0].split(" ")[0],
+          );
+          const ORDER = [
+            "Plan:",
+            "NAP-100",
+            "NAP-107",
+            "NAP-108",
+            "Sample",
+            "NAP-104",
+            "NAP-105",
+            "NAP-106",
+            "Sample",
+            "NAP-101",
+            "NAP-102",
+            "NAP-103",
+            "Plan:",
+            "NAP-109",
+            "NAP-110",
+            "Single",
+            "NAP-111",
+            "NAP-112",
+            "No",
+            "Total",
+          ];
+          if (JSON.stringify(order) !== JSON.stringify(ORDER))
+            failures.push(
+              `${page.path} rows are not in the grouping order on ${platform}`,
+            );
+        }
       }
       await tab.screenshot({
         path: join(dir, `app_${page.feature}_${platform}.png`),

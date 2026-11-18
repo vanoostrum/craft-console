@@ -5,10 +5,12 @@ import { PHASES, type Phase } from "@/lib/cost";
 import { projectsRead } from "@/lib/data-source";
 import { formatDuration, formatEuro, formatPlanPrice } from "@/lib/format";
 import { MAX_SHARE_TIME_ZONE, maxShare } from "@/lib/max-share";
-import { projects, type PhaseValues } from "@/lib/projects";
+import { projectPath, projects, type PhaseValues } from "@/lib/projects";
 import { ReadError } from "@/lib/read-error";
 import { readAtLabel } from "@/lib/read-time";
 import { shadeBy, type ShadeBy } from "@/lib/shade";
+import { ReadErrorNotice, SkippedFilesNotice } from "./read-notices";
+import { ShadeSwitch, withShade } from "./shade-switch";
 import { TopBar } from "./top-bar";
 
 export const dynamic = "force-dynamic";
@@ -28,27 +30,6 @@ const monthName = (now: Date, month: "short" | "long") =>
     month,
     timeZone: MAX_SHARE_TIME_ZONE,
   }).format(now);
-
-function ShadeSwitch({ current }: { current: ShadeBy }) {
-  return (
-    <>
-      <span className="label" id="shade-label">
-        Shade by
-      </span>
-      <div className="toggle" role="group" aria-labelledby="shade-label">
-        <Link href="/" aria-current={current === "cost" ? "true" : undefined}>
-          € cost
-        </Link>
-        <Link
-          href="/?shade=time"
-          aria-current={current === "time" ? "true" : undefined}
-        >
-          craft time
-        </Link>
-      </div>
-    </>
-  );
-}
 
 function PhaseMix({ values, shade }: { values: PhaseValues; shade: ShadeBy }) {
   const total = PHASES.reduce((sum, phase) => sum + values[phase], 0);
@@ -80,11 +61,6 @@ function PhaseMix({ values, shade }: { values: PhaseValues; shade: ShadeBy }) {
   );
 }
 
-const SOURCE_NAME = {
-  bucket: "the transcript bucket",
-  linear: "Linear",
-} as const;
-
 const time = (seconds: number | null) =>
   seconds === null ? "—" : formatDuration(seconds);
 
@@ -111,7 +87,7 @@ export default async function ProjectsPage({
   );
   const page = (content: React.ReactNode) => (
     <>
-      <TopBar current="/" tools={<ShadeSwitch current={shade} />} />
+      <TopBar current="/" tools={<ShadeSwitch path="/" current={shade} />} />
       <main>
         <section className="panel" aria-labelledby="projects-title">
           {content}
@@ -131,11 +107,7 @@ export default async function ProjectsPage({
           {heading}
           {bucketLink}
         </div>
-        <p className="notice error" role="alert">
-          <strong>Could not read {SOURCE_NAME[error.source]}:</strong>{" "}
-          {error.reason}. The page shows no numbers until the transcript bucket
-          and Linear can both be read.
-        </p>
+        <ReadErrorNotice error={error} />
       </>,
     );
   }
@@ -154,18 +126,7 @@ export default async function ProjectsPage({
         </div>
         {bucketLink}
       </div>
-      {unreadable.length > 0 && (
-        <div className="notice" role="status">
-          {unreadable.length === 1
-            ? "1 session file could not be read and is not counted:"
-            : `${unreadable.length} session files could not be read and are not counted:`}
-          <ul>
-            {unreadable.map((path) => (
-              <li key={path}>{path}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <SkippedFilesNotice unreadable={unreadable} />
       <table>
         <thead>
           <tr>
@@ -185,7 +146,7 @@ export default async function ProjectsPage({
         <tbody>
           {rows.length === 0 && (
             <tr>
-              <td className="empty" colSpan={9}>
+              <td className="empty-row" colSpan={9}>
                 No sessions in the transcript bucket yet.
               </td>
             </tr>
@@ -199,7 +160,9 @@ export default async function ProjectsPage({
                 data-sessions={row.sessions}
               >
                 <td className="name">
-                  {row.name}
+                  <Link href={withShade(projectPath(row.repository), shade)}>
+                    {row.name}
+                  </Link>
                   {row.repository !== null && (
                     <>
                       {/* A break point, so a long name can wrap on a phone. */}

@@ -14,8 +14,9 @@ const BUCKET_PATH = "/storage/v1/b/craft-transcripts/o";
 export type Ticket = {
   identifier: string;
   title: string;
+  description: string | null;
   state: { name: string; type: string };
-  project: { name: string } | null;
+  project: { name: string; url: string } | null;
   projectMilestone: { name: string } | null;
   parent: { identifier: string } | null;
 };
@@ -61,8 +62,12 @@ export function ticket(identifier: string): Ticket {
   return {
     identifier,
     title: `Synthetic ticket ${identifier}`,
+    description: `A synthetic ticket, ${identifier}.`,
     state: { name: "Done", type: "completed" },
-    project: { name: "Synthetic project" },
+    project: {
+      name: "Synthetic project",
+      url: "https://linear.app/example/project/synthetic",
+    },
     projectMilestone: null,
     parent: null,
   };

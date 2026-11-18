@@ -35,7 +35,7 @@ const bad = [
 
 const STATES = [
   { state: "default", scenario: normal, check: ".read-at" },
-  { state: "empty", scenario: scenario([], []), check: "td.empty" },
+  { state: "empty", scenario: scenario([], []), check: "td.empty-row" },
   {
     state: "error",
     scenario: { ...normal, listStatus: 403 },

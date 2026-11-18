@@ -24,16 +24,30 @@ export type ProjectsRead = {
   tickets: Ticket[];
 };
 
-/** Read the bucket, then the tickets its sessions name in Linear, as one result. */
+/**
+ * Read the bucket, then the tickets its sessions name in Linear, as one result.
+ * The parents of those tickets come from a second lookup, because a plan
+ * ticket that no session names is not in the first answer. The overview and
+ * the project page both read through this, so they see the same tickets.
+ */
 export async function readProjects(readers: Readers): Promise<ProjectsRead> {
   const { sessions, unreadable } = await readers.sessions.sessions();
   const tickets = await readers.tickets.tickets(ticketKeys(sessions));
-  return { sessions, unreadable, tickets };
+  const held = new Set(tickets.map((ticket) => ticket.key));
+  const parents = [
+    ...new Set(
+      tickets
+        .map((ticket) => ticket.parent)
+        .filter((key): key is string => key !== null && !held.has(key)),
+    ),
+  ];
+  const more = parents.length > 0 ? await readers.tickets.tickets(parents) : [];
+  return { sessions, unreadable, tickets: [...tickets, ...more] };
 }
 
 let projects: (() => Promise<Cached<ProjectsRead>>) | undefined;
 
-/** The read for the Projects page, kept for 5 minutes. A failed read throws a `ReadError` and is not kept. */
+/** The read for the Projects page and the project pages, kept for 5 minutes. A failed read throws a `ReadError` and is not kept. */
 export function projectsRead(): Promise<Cached<ProjectsRead>> {
   projects ??= cachedRead(() =>
     readProjects(selectReaders(process.env.CONSOLE_DATA)),

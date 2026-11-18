@@ -1,5 +1,6 @@
 import { gcsAuth, CredentialError, type Env } from "./gcs-credentials";
 import { httpReason, ReadError, readError } from "./read-error";
+import { briefOf } from "./brief";
 import { Ticket, type Readers, type SessionRead } from "./readers";
 import { SessionMetadata } from "./session-metadata";
 
@@ -98,12 +99,13 @@ function parseSession(body: string): SessionMetadata | undefined {
 }
 
 const ISSUE_FIELDS =
-  "title state { name type } project { name } projectMilestone { name } parent { identifier }";
+  "title description state { name type } project { name url } projectMilestone { name } parent { identifier }";
 
 type LinearIssue = {
   title: string;
+  description: string | null;
   state: { name: string; type: string };
-  project: { name: string } | null;
+  project: { name: string; url: string } | null;
   projectMilestone: { name: string } | null;
   parent: { identifier: string } | null;
 };
@@ -183,8 +185,10 @@ function toTicket(key: string, issue: LinearIssue): Ticket {
     state: issue.state.name,
     stateType: issue.state.type,
     project: issue.project?.name ?? null,
+    projectUrl: issue.project?.url ?? null,
     milestone: issue.projectMilestone?.name ?? null,
     parent: issue.parent?.identifier ?? null,
+    brief: briefOf(issue.title, issue.description ?? null),
   });
   if (!ticket.success)
     throw new ReadError("linear", `unexpected answer for ${key}`);
