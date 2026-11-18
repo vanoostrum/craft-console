@@ -36,5 +36,6 @@ They save a screenshot of each page at desktop and phone width in `screenshots/`
 
 - `pnpm test` prints line and branch coverage for `src/lib/`. There is no minimum. A line or branch under `Uncovered` needs a test, or a reason in the PR.
 - Follow the test seam rule in `CLAUDE.md`: pages and routes are tested over HTTP in `e2e/`; unit tests in `src/lib/*.test.ts` only where the rule allows them.
-- `CONSOLE_DATA` picks the data source: unset, empty, or `fixtures` reads the fixtures in `src/fixtures/`; `live` stops the app until the Live data ticket (CRAFT-63). `pnpm start` checks it before the server starts.
+- `CONSOLE_DATA` picks the data source: unset, empty, or `fixtures` reads the fixtures in `src/fixtures/`; `live` reads the transcript bucket and Linear. `pnpm start` checks the value before the server starts.
+- `e2e/live.spec.ts` tests live data against a local stub of the bucket and Linear (`e2e/live-stub.ts`), with synthetic answers. Each test starts its own app on a free port, with every credential blank and an empty `HOME`, so no test calls the bucket or Linear, and no credential of your machine reaches the stub.
 - Add dependencies with `pnpm add <pkg>` (or `pnpm add -D <pkg>`), pin an exact version, and commit `pnpm-lock.yaml`.

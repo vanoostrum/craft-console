@@ -1,0 +1,350 @@
+import { expect, test, type Page } from "@playwright/test";
+import {
+  freePort,
+  LiveStub,
+  scenario,
+  session,
+  startLiveApp,
+  ticket,
+  type App,
+} from "./live-stub";
+
+// The Projects page on CONSOLE_DATA=live, against a local stub of the bucket
+// and Linear. Each test starts its own app, so each starts with no cached read.
+
+test.describe.configure({ mode: "serial" });
+
+const NO_NUMBERS =
+  "The page shows no numbers until the transcript bucket and Linear can both be read.";
+
+const DEFAULT = scenario(
+  [
+    session("vanoostrum/alpha", "a1", ["ALP-1"]),
+    session("vanoostrum/alpha", "a2", ["ALP-1", "ALP-2"]),
+    session("vanoostrum/alpha", "a3", ["ALP-2", "ALP-3"]),
+    session("vanoostrum/beta", "b1", ["BET-1"]),
+    session("no-repo", "n1", []),
+  ],
+  ["ALP-1", "ALP-2", "ALP-3", "BET-1"],
+);
+const DEFAULT_ROWS = [
+  ["vanoostrum/alpha", "3", "3"],
+  ["vanoostrum/beta", "1", "1"],
+  ["No repository", "1", "0"],
+];
+
+const stub = new LiveStub();
+let app: App | undefined;
+
+test.beforeAll(() => stub.start());
+test.afterAll(() => stub.stop());
+test.beforeEach(() => {
+  stub.seen = [];
+  stub.scenario = DEFAULT;
+});
+test.afterEach(() => {
+  app?.stop();
+  app = undefined;
+});
+
+async function start(env: Record<string, string> = {}) {
+  app = await startLiveApp(stub, env);
+  return app;
+}
+
+async function rows(page: Page): Promise<string[][]> {
+  return page
+    .locator("tbody tr")
+    .evaluateAll((trs) =>
+      trs.map((tr) =>
+        [...tr.querySelectorAll("td")].map((td) => td.textContent!.trim()),
+      ),
+    );
+}
+
+const amsterdam = (time: Date) =>
+  `Read at ${new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Amsterdam",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).format(time)}`;
+
+test("lists each repository with sessions from the bucket and tickets from Linear, read at an Amsterdam time", async ({
+  page,
+}) => {
+  const { url } = await start();
+  const before = new Date();
+  await page.goto(url);
+  const after = new Date();
+  expect(await rows(page)).toEqual(DEFAULT_ROWS);
+  const readAt = (await page.locator(".read-at").textContent())!;
+  expect([amsterdam(before), amsterdam(after)]).toContain(readAt);
+  await expect(page.locator("main").getByRole("status")).toHaveCount(0);
+  await expect(page.locator("main").getByRole("alert")).toHaveCount(0);
+});
+
+test("with no credentials, sends no Authorization header to the bucket or Linear", async ({
+  page,
+}) => {
+  const { url } = await start();
+  await page.goto(url);
+  expect(await rows(page)).toEqual(DEFAULT_ROWS);
+  expect(stub.reads("gcs").length).toBeGreaterThan(0);
+  expect(stub.reads("linear").length).toBeGreaterThan(0);
+  expect(stub.seen.map((r) => r.authorization)).toEqual(
+    stub.seen.map(() => undefined),
+  );
+});
+
+test("sends LINEAR_API_KEY as the Authorization header to Linear only", async ({
+  page,
+}) => {
+  const { url } = await start({ LINEAR_API_KEY: "lin_api_synthetic" });
+  await page.goto(url);
+  expect(await rows(page)).toEqual(DEFAULT_ROWS);
+  expect(stub.reads("linear").map((r) => r.authorization)).toEqual(
+    stub.reads("linear").map(() => "lin_api_synthetic"),
+  );
+  expect(stub.reads("gcs").every((r) => r.authorization === undefined)).toBe(
+    true,
+  );
+});
+
+test("keeps a read: the next request makes no new read and shows the same read time", async ({
+  page,
+}) => {
+  const { url } = await start();
+  await page.goto(url);
+  const readAt = await page.locator(".read-at").textContent();
+  const reads = stub.seen.length;
+  stub.scenario = scenario([], []);
+  await page.reload();
+  expect(await rows(page)).toEqual(DEFAULT_ROWS);
+  await expect(page.locator(".read-at")).toHaveText(readAt!);
+  expect(stub.seen.length).toBe(reads);
+});
+
+test("an empty bucket shows the table header and the empty row", async ({
+  page,
+}) => {
+  stub.scenario = scenario([], []);
+  const { url } = await start();
+  await page.goto(url);
+  await expect(page.getByRole("columnheader")).toHaveText([
+    "Repository",
+    "Sessions",
+    "Tickets",
+  ]);
+  expect(await rows(page)).toEqual([
+    ["No sessions in the transcript bucket yet."],
+  ]);
+  await expect(page.locator("td.empty")).toHaveAttribute("colspan", "3");
+  await expect(page.locator(".read-at")).toHaveText(/^Read at \d\d:\d\d$/);
+});
+
+test("a failed bucket read shows the error and no numbers, and is not kept", async ({
+  page,
+}) => {
+  stub.scenario = { ...DEFAULT, listStatus: 403 };
+  const { url } = await start();
+  await page.goto(url);
+  await expect(page.locator("main").getByRole("alert")).toHaveText(
+    `Could not read the transcript bucket: 403 Forbidden. ${NO_NUMBERS}`,
+  );
+  await expect(page.locator("table")).toHaveCount(0);
+  await expect(page.locator(".read-at")).toHaveCount(0);
+  expect(stub.reads("linear")).toHaveLength(0);
+
+  stub.scenario = DEFAULT;
+  await page.reload();
+  expect(await rows(page)).toEqual(DEFAULT_ROWS);
+  await expect(page.locator("main").getByRole("alert")).toHaveCount(0);
+});
+
+test("a session file that cannot be fetched fails the bucket read", async ({
+  page,
+}) => {
+  stub.scenario = {
+    ...DEFAULT,
+    files: {
+      ...DEFAULT.files,
+      "vanoostrum/beta/sessions/b1/metadata.json": 404,
+    },
+  };
+  const { url } = await start();
+  await page.goto(url);
+  await expect(page.locator("main").getByRole("alert")).toHaveText(
+    `Could not read the transcript bucket: 404 Not Found. ${NO_NUMBERS}`,
+  );
+  await expect(page.locator("table")).toHaveCount(0);
+});
+
+test("a failed Linear read with a working bucket shows the error, not ticket counts of 0, and the next request reads again", async ({
+  page,
+}) => {
+  stub.scenario = { ...DEFAULT, linearStatus: 500 };
+  const { url } = await start();
+  await page.goto(url);
+  await expect(page.locator("main").getByRole("alert")).toHaveText(
+    `Could not read Linear: 500 Internal Server Error. ${NO_NUMBERS}`,
+  );
+  await expect(page.locator("table")).toHaveCount(0);
+  await expect(page.locator(".read-at")).toHaveCount(0);
+
+  const linearReads = stub.reads("linear").length;
+  stub.scenario = DEFAULT;
+  await page.reload();
+  expect(await rows(page)).toEqual(DEFAULT_ROWS);
+  expect(stub.reads("linear").length).toBeGreaterThan(linearReads);
+});
+
+test("a Linear that cannot be reached shows the network error", async ({
+  page,
+}) => {
+  const closed = await freePort();
+  const { url } = await start({
+    CONSOLE_LINEAR_URL: `http://127.0.0.1:${closed}`,
+  });
+  await page.goto(url);
+  await expect(page.locator("main").getByRole("alert")).toContainText(
+    `Could not read Linear: connect ECONNREFUSED 127.0.0.1:${closed}.`,
+  );
+});
+
+test("session files that do not parse are not counted, and a notice lists them", async ({
+  page,
+}) => {
+  const bad = [
+    "vanoostrum/alpha/sessions/bad-json/metadata.json",
+    "vanoostrum/beta/sessions/bad-shape/metadata.json",
+  ];
+  stub.scenario = {
+    ...DEFAULT,
+    pages: [[...DEFAULT.pages[0], ...bad]],
+    files: {
+      ...DEFAULT.files,
+      [bad[0]]: '{"repo": "vanoostrum/alpha",',
+      [bad[1]]: JSON.stringify({ repo: "vanoostrum/beta", tickets: "BET-9" }),
+    },
+  };
+  const { url } = await start();
+  await page.goto(url);
+  const notice = page.locator("main").getByRole("status");
+  await expect(notice).toContainText(
+    "2 session files could not be read and are not counted:",
+  );
+  await expect(notice.locator("li")).toHaveText(bad);
+  expect(await rows(page)).toEqual(DEFAULT_ROWS);
+});
+
+test("one session file that does not parse gets the singular notice", async ({
+  page,
+}) => {
+  const bad = "vanoostrum/alpha/sessions/bad-json/metadata.json";
+  stub.scenario = {
+    ...DEFAULT,
+    pages: [[...DEFAULT.pages[0], bad]],
+    files: { ...DEFAULT.files, [bad]: "not json" },
+  };
+  const { url } = await start();
+  await page.goto(url);
+  await expect(page.locator("main").getByRole("status")).toContainText(
+    "1 session file could not be read and is not counted:",
+  );
+  await expect(
+    page.locator("main").getByRole("status").locator("li"),
+  ).toHaveText([bad]);
+});
+
+test("counts every session of a listing over two pages", async ({ page }) => {
+  const [first, second] = [
+    DEFAULT.pages[0].slice(0, 5),
+    DEFAULT.pages[0].slice(5),
+  ];
+  stub.scenario = { ...DEFAULT, pages: [first, second] };
+  const { url } = await start();
+  await page.goto(url);
+  expect(await rows(page)).toEqual(DEFAULT_ROWS);
+  expect(
+    stub.reads("gcs").filter((r) => r.path.includes("pageToken=1")),
+  ).toHaveLength(1);
+});
+
+test("a key that Linear does not find does not drop the other keys of its chunk", async ({
+  page,
+}) => {
+  stub.scenario = scenario(
+    [session("vanoostrum/alpha", "a1", ["ALP-1", "ALP-404", "ALP-2"])],
+    ["ALP-1", "ALP-2"],
+  );
+  const { url } = await start();
+  await page.goto(url);
+  expect(await rows(page)).toEqual([["vanoostrum/alpha", "1", "2"]]);
+  expect(stub.reads("linear").map((r) => r.keys)).toEqual([
+    ["ALP-1", "ALP-404", "ALP-2"],
+    ["ALP-1", "ALP-2"],
+  ]);
+});
+
+test("a chunk where Linear finds no key counts no tickets and stops", async ({
+  page,
+}) => {
+  stub.scenario = scenario(
+    [session("vanoostrum/alpha", "a1", ["ALP-404"])],
+    [],
+  );
+  const { url } = await start();
+  await page.goto(url);
+  expect(await rows(page)).toEqual([["vanoostrum/alpha", "1", "0"]]);
+  expect(stub.reads("linear")).toHaveLength(1);
+});
+
+test("asks Linear for the keys in chunks of 50", async ({ page }) => {
+  const keys = Array.from({ length: 55 }, (_, i) => `ALP-${i + 1}`);
+  stub.scenario = scenario([session("vanoostrum/alpha", "a1", keys)], keys);
+  const { url } = await start();
+  await page.goto(url);
+  expect(await rows(page)).toEqual([["vanoostrum/alpha", "1", "55"]]);
+  expect(stub.reads("linear").map((r) => r.keys!.length)).toEqual([50, 5]);
+});
+
+test("a key that Linear resolves to a ticket with a new key counts under the key the session names", async ({
+  page,
+}) => {
+  stub.scenario = {
+    ...scenario([session("vanoostrum/alpha", "a1", ["OLD-7"])], []),
+    tickets: { "OLD-7": ticket("NEW-7") },
+  };
+  const { url } = await start();
+  await page.goto(url);
+  expect(await rows(page)).toEqual([["vanoostrum/alpha", "1", "1"]]);
+});
+
+test("an error shows no credential, on the page or in the server log", async ({
+  page,
+}) => {
+  const MARKER = "MARKER-91c2-SECRET";
+  stub.scenario = { ...DEFAULT, linearStatus: 500 };
+  let live = await start({ LINEAR_API_KEY: `lin_api_${MARKER}` });
+  await page.goto(live.url);
+  await expect(page.locator("main").getByRole("alert")).toHaveText(
+    `Could not read Linear: 500 Internal Server Error. ${NO_NUMBERS}`,
+  );
+  expect(await page.content()).not.toContain(MARKER);
+  expect(live.log()).not.toContain(MARKER);
+  live.stop();
+
+  stub.scenario = DEFAULT;
+  stub.seen = [];
+  live = await start({
+    GCS_CREDENTIALS_JSON: `{"private_key": "${MARKER}"`,
+  });
+  await page.goto(live.url);
+  await expect(page.locator("main").getByRole("alert")).toHaveText(
+    `Could not read the transcript bucket: GCS_CREDENTIALS_JSON is not a valid service account key. ${NO_NUMBERS}`,
+  );
+  expect(await page.content()).not.toContain(MARKER);
+  expect(live.log()).not.toContain(MARKER);
+  expect(stub.reads("gcs")).toHaveLength(0);
+});

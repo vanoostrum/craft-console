@@ -41,6 +41,7 @@ test.describe("Projects", () => {
     const bucket = page.getByRole("link", { name: "Open the bucket" });
     await expect(bucket).toHaveAttribute("href", BUCKET);
     await expect(bucket).not.toHaveAttribute("target", /.+/);
+    await expect(page.locator(".read-at")).toHaveText(/^Read at \d\d:\d\d$/);
     await expect(page.getByRole("columnheader")).toHaveText([
       "Repository",
       "Sessions",

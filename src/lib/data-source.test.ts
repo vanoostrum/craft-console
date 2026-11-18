@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { LIVE_NOT_AVAILABLE, parseDataSource } from "./console-data";
+import { parseDataSource } from "./console-data";
 import { selectReaders } from "./data-source";
 
 describe("parseDataSource", () => {
@@ -27,21 +27,15 @@ describe("selectReaders", () => {
     "gives the fixture readers for %j",
     async (value) => {
       const readers = selectReaders(value);
-      const sessions = await readers.sessions.sessions();
+      const { sessions, unreadable } = await readers.sessions.sessions();
       expect(sessions.length).toBeGreaterThan(0);
+      expect(unreadable).toEqual([]);
       const keys = [...new Set(sessions.flatMap((session) => session.tickets))];
       const tickets = await readers.tickets.tickets(keys);
       expect(tickets.length).toBeGreaterThan(0);
       expect(tickets.every((ticket) => keys.includes(ticket.key))).toBe(true);
     },
   );
-
-  it("throws that live data comes with the Live data ticket, and gives no readers", () => {
-    expect(LIVE_NOT_AVAILABLE).toBe(
-      "CONSOLE_DATA=live is not available yet: live data comes with the Live data ticket (CRAFT-63).",
-    );
-    expect(() => selectReaders("live")).toThrow(LIVE_NOT_AVAILABLE);
-  });
 
   it("throws the same message as the parsing for a wrong value", () => {
     expect(() => selectReaders("fixture")).toThrow(

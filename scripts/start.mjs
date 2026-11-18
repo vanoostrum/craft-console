@@ -2,10 +2,10 @@
 // stops here with a non-zero status, before the server serves a request.
 import { spawn } from "node:child_process";
 // Node 22.18+ loads the .ts file with its built-in type stripping (see `engines`).
-import { usableDataSource } from "../src/lib/console-data.ts";
+import { parseDataSource } from "../src/lib/console-data.ts";
 
 try {
-  usableDataSource(process.env.CONSOLE_DATA);
+  parseDataSource(process.env.CONSOLE_DATA);
 } catch (error) {
   console.error(error instanceof Error ? error.message : error);
   process.exit(1);
