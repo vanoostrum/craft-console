@@ -31,6 +31,7 @@ const PAGES = [
     path: "/projects/vanoostrum/nap-time",
     gallery: "design/pages/project/default.html",
     project: "vanoostrum/nap-time",
+    fold: true,
   },
   {
     feature: "project-time",
@@ -314,8 +315,93 @@ try {
           JSON.stringify([page.shade === "cost" ? "€ cost" : "craft time"])
         )
           failures.push(`${page.path} has the wrong Shade by link current`);
+        // Each project name links to its project page, with the shade choice.
+        const links = await tab
+          .locator("tbody td.name a")
+          .evaluateAll((as) => as.map((a) => a.getAttribute("href")));
+        const wantLinks = expectedRows().map(
+          (row) =>
+            `/projects/${row.repo}` +
+            (page.shade === "time" ? "?shade=time" : ""),
+        );
+        log.push(`project links: ${JSON.stringify(links)}`);
+        if (JSON.stringify(links) !== JSON.stringify(wantLinks))
+          failures.push(`${page.path} project links differ on ${platform}`);
+        if (platform === "desktop") {
+          const first = tab.locator("tbody td.name a").first();
+          const href = await first.getAttribute("href");
+          await first.click();
+          await tab.waitForURL((url) => url.pathname + url.search === href);
+          const heading = await tab.locator("h1").innerText();
+          log.push(
+            `click ${JSON.stringify(href)} -> heading ${JSON.stringify(heading)}`,
+          );
+          if (
+            !heading.startsWith(
+              expectedRows()[0].cells[0].replace(expectedRows()[0].repo, ""),
+            )
+          )
+            failures.push(
+              `${page.path} first project link opens the wrong page`,
+            );
+          await tab.goto(base + page.path);
+        }
         const notes = await tab.locator("p.note").allTextContents();
         log.push(`notes: ${JSON.stringify(notes)}`);
+      }
+      if (page.fold && platform === "desktop") {
+        // Fold a milestone, fold its plan, open the plan: the milestone stays folded.
+        const state = async (step) => {
+          const visible = await tab.locator("tbody tr:visible").count();
+          const expanded = await tab
+            .locator("tbody button.fold")
+            .evaluateAll((bs) =>
+              bs.map(
+                (b) =>
+                  `${b.getAttribute("aria-label")}=${b.getAttribute("aria-expanded")}`,
+              ),
+            );
+          const total = await tab.locator("tr.total td").nth(8).innerText();
+          log.push(
+            `fold: ${step}: visible rows ${visible}, Total ${total}, buttons ${JSON.stringify(expanded)}`,
+          );
+          return { visible, total, expanded };
+        };
+        const start = await state("on load");
+        await tab
+          .getByRole("button", {
+            name: "Fold Sample app v1: Reports",
+            exact: true,
+          })
+          .click();
+        const one = await state("after Fold Sample app v1: Reports");
+        await tab
+          .getByRole("button", {
+            name: "Fold Plan: Sample app v1",
+            exact: true,
+          })
+          .click();
+        const two = await state("after Fold Plan: Sample app v1");
+        await tab
+          .getByRole("button", {
+            name: "Open Plan: Sample app v1",
+            exact: true,
+          })
+          .click();
+        const three = await state("after Open Plan: Sample app v1");
+        await tab.reload();
+        const four = await state("after reload");
+        const ok =
+          start.expanded.every((e) => e.endsWith("=true")) &&
+          one.visible === start.visible - 3 &&
+          two.visible === start.visible - 11 &&
+          three.visible === one.visible &&
+          three.expanded.includes("Open Sample app v1: Reports=false") &&
+          four.visible === start.visible &&
+          four.expanded.every((e) => e.endsWith("=true")) &&
+          [one, two, three, four].every((s) => s.total === start.total);
+        if (!ok)
+          failures.push(`${page.path} folding does not behave as specified`);
       }
       if (page.project) {
         const rows = await tab

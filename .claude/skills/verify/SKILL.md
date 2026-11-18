@@ -31,7 +31,7 @@ One file per entry point in `features/`, with its recipe:
 | ------------------------------- | ---------------------------- | ------------------ |
 | Projects `/` and `/?shade=time` | `features/projects.md`       | driven             |
 | Project page, with Shade by     | `features/project.md`        | driven             |
-| A level folded open             | `features/project.md`        | by hand, and e2e   |
+| A level folded open             | `features/project.md`        | driven             |
 | Craft versions `/versions`      | `features/craft-versions.md` | driven             |
 | Health `/api/health`            | `features/health.md`         | driven by `launch` |
 
