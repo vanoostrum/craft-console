@@ -92,19 +92,25 @@ for (const route of [
   "/projects/vanoostrum/nap-time",
   "/projects/vanoostrum/nap-time?shade=time",
 ])
-  test(`${route}: each shaded cell has its solid step, white text, and a second line in --text; the "·" is --faint`, async ({
-    page,
-  }) => {
-    await page.goto(route);
-    const steps = await page
-      .locator(SHADED)
-      .evaluateAll((tds) => [...new Set(tds.map((td) => td.className))].sort());
-    // Step 5 is the step that failed AA before stage 2, by cost and by time.
-    expect(steps).toContain("cell c5");
-    expect(steps.length).toBeGreaterThanOrEqual(4);
-    await expect(page.locator(".grid td.empty").first()).toBeVisible();
-    expect(await shadeFailures(page, route)).toEqual([]);
-  });
+  for (const platform of PLATFORMS)
+    test(`${route} on ${platform.name}: each shaded cell has its solid step, white text, and a second line in --text; the "·" is --faint`, async ({
+      page,
+    }) => {
+      await page.setViewportSize(platform);
+      await page.goto(route);
+      const steps = await page
+        .locator(SHADED)
+        .evaluateAll((tds) =>
+          [...new Set(tds.map((td) => td.className))].sort(),
+        );
+      // Step 5 is the step that failed AA before stage 2, by cost and by time.
+      expect(steps).toContain("cell c5");
+      expect(steps.length).toBeGreaterThanOrEqual(4);
+      await expect(page.locator(".grid td.empty").first()).toBeAttached();
+      expect(
+        await shadeFailures(page, `${route} at ${platform.width}px`),
+      ).toEqual([]);
+    });
 
 test("a folded group hides its rows from the checks, and its rows pass again once open", async ({
   page,
@@ -124,11 +130,13 @@ test("a folded group hides its rows from the checks, and its rows pass again onc
   expect(await allChecks(page, `${route} open again`)).toEqual([]);
 });
 
-/** The focus outline of design/components/links.html and shade-switch.html. */
+/** The focus outline of design/components/links.html, primary-action.html, and shade-switch.html. */
 for (const route of ["/", "/projects/vanoostrum/nap-time", "/versions"])
-  test(`${route}: each link and button shows the accent focus outline from the keyboard`, async ({
+  for (const platform of PLATFORMS)
+  test(`${route} on ${platform.name}: each link and button shows the accent focus outline from the keyboard`, async ({
     page,
   }) => {
+    await page.setViewportSize(platform);
     await page.goto(route);
     const count = await page.locator("a, button").count();
     const seen: string[] = [];
@@ -155,7 +163,7 @@ for (const route of ["/", "/projects/vanoostrum/nap-time", "/versions"])
       });
       if (focus.tag === "BODY") break;
       seen.push(focus.name);
-      const at = `${route}: ${focus.name}`;
+      const at = `${route} at ${platform.width}px: ${focus.name}`;
       if (focus.outline !== `solid 2px ${focus.accent}`)
         failures.push(`${at}: outline ${focus.outline}, needs solid 2px ${focus.accent}`);
       const offset = focus.inToggle ? "-2px" : "2px";
