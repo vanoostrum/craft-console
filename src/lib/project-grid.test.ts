@@ -23,7 +23,7 @@ const segment = (
   output: number,
   over: Partial<Segment> = {},
 ): Segment => ({
-  step: "craft:build",
+  step: "build",
   ticket: ticketKey,
   started_at: null,
   ended_at: null,
@@ -171,7 +171,7 @@ describe("projectGrid", () => {
       attributed([
         segment("A-1", 1000),
         segment("A-1", 1000, {
-          step: "craft:spec",
+          step: "spec",
           work_seconds: 60,
           wait_seconds: 5,
         }),
@@ -200,7 +200,7 @@ describe("projectGrid", () => {
 
 describe("attributedSegments", () => {
   const brief = "https://linear.app/example/document/brief-p-0123456789ab";
-  const briefSegment = segment(null, 1000, { step: "craft:brainstorm", brief });
+  const briefSegment = segment(null, 1000, { step: "brainstorm", brief });
 
   it("moves a brief segment to the plan in the repository with the most of its tickets' segments, the first by name on a tie", () => {
     const tickets = [

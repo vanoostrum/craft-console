@@ -2,15 +2,17 @@
 
 The Console needs, per segment, the craft version, the model, the craft time, and the waiting time, and it needs a one-shot spec session split per ticket. All of that is in the transcripts, but the transcripts are about 110 MB of gzip on 2026-11-18, and reading them on each request would break ADR 0002. So craft's upload hook (`plugins/craft/hooks/upload_transcripts.py` in `vanoostrum/craft`) computes the numbers when it uploads, and writes them into `metadata.json`. The Console reads only `metadata.json`, as before.
 
+Each segment also has `step`, a string or null. It is older than this ADR, and a session without it does not parse. `step` is the name of the craft step that started the segment, without `craft:`: `brainstorm`, `setup`, `plan`, `spec`, `design`, `build`, `review`, `merge`, or `next`. It is null for the part of a session before its first step call. The Console counts any other value as phase `other`.
+
 These are the fields that the Console reads, added to each segment. The names are a contract between the two repositories:
 
-| Field           | Type           | What                                                                                                                             |
-| --------------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `craft_version` | string or null | The version in craft's `plugin.json` when the step ran, such as `2.9.0`. Null when it is not known.                              |
-| `model`         | string or null | The model of the step's own turns. Subagents keep their own tokens per model.                                                    |
-| `work_seconds`  | number         | Craft time: the gaps between transcript lines, except the gaps that end with an incoming message.                                |
-| `wait_seconds`  | number         | Waiting on the owner: the gaps that end with an incoming message: a `queue-operation` `enqueue` line, or a typed prompt.         |
-| `brief`         | string or null | For a `craft:brainstorm` or `craft:setup` segment: the URL of the Linear document `Brief: <name>` that it wrote. Null otherwise. |
+| Field           | Type           | What                                                                                                                     |
+| --------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `craft_version` | string or null | The version in craft's `plugin.json` when the step ran, such as `2.9.0`. Null when it is not known.                      |
+| `model`         | string or null | The model of the step's own turns. Subagents keep their own tokens per model.                                            |
+| `work_seconds`  | number         | Craft time: the gaps between transcript lines, except the gaps that end with an incoming message.                        |
+| `wait_seconds`  | number         | Waiting on the owner: the gaps that end with an incoming message: a `queue-operation` `enqueue` line, or a typed prompt. |
+| `brief`         | string or null | For a `brainstorm` or `setup` segment: the URL of the Linear document `Brief: <name>` that it wrote. Null otherwise.     |
 
 A one-shot spec session gets one segment per ticket that it specifies, so its cost lands on each ticket, not on the last one it names.
 

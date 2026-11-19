@@ -79,9 +79,7 @@ const amsterdamMonth = (time) => {
   return `${p.find((x) => x.type === "year").value}-${p.find((x) => x.type === "month").value}`;
 };
 const phase = (step) =>
-  /^craft:(plan|spec|design|build|review|merge)$/.test(step ?? "")
-    ? step.slice(6)
-    : "other";
+  /^(plan|spec|design|build|review|merge)$/.test(step ?? "") ? step : "other";
 const euro = (n) =>
   `€${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 const duration = (seconds) => {

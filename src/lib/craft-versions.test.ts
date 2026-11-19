@@ -16,14 +16,14 @@ const ticket = (key: string): Ticket => ({
   brief: null,
 });
 
-/** A craft:build segment of about `eur` euros of claude-opus-5-5 output tokens. */
+/** A build segment of about `eur` euros of claude-opus-5-5 output tokens. */
 const segment = (
   ticketKey: string,
   version: string | null | undefined,
   eur: number,
   over: Partial<Segment> = {},
 ): Segment => ({
-  step: "craft:build",
+  step: "build",
   ticket: ticketKey,
   started_at: null,
   ended_at: null,
