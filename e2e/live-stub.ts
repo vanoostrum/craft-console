@@ -42,7 +42,13 @@ export type SeenRequest = {
   keys?: string[];
 };
 
-export function session(repo: string, id: string, tickets: string[]) {
+/** A stored session. Its segments default to none: no cost and no craft time. */
+export function session(
+  repo: string,
+  id: string,
+  tickets: string[],
+  segments: unknown[] = [],
+) {
   return {
     path: `${repo}/sessions/${id}/metadata.json`,
     body: JSON.stringify({
@@ -50,7 +56,7 @@ export function session(repo: string, id: string, tickets: string[]) {
       branch: "main",
       session_id: id,
       tickets,
-      segments: [],
+      segments,
       event: "Stop",
       uploaded_at: "2026-11-01T10:00:00Z",
       some_future_field: true,

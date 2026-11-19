@@ -14,17 +14,19 @@ export const PHASES = [
 export type Phase = (typeof PHASES)[number];
 
 const STEP_PHASES: Readonly<Record<string, Phase>> = {
-  "craft:plan": "plan",
-  "craft:spec": "spec",
-  "craft:design": "design",
-  "craft:build": "build",
-  "craft:review": "review",
-  "craft:merge": "merge",
+  plan: "plan",
+  spec: "spec",
+  design: "design",
+  build: "build",
+  review: "review",
+  merge: "merge",
 };
 
-/** The phase of a segment's step (GLOSSARY). Every other step, and null, is `other`. */
+/** The phase of a segment's stored step, such as `build` (GLOSSARY). Every other step, and null, is `other`. */
 export function phaseOf(step: string | null): Phase {
-  return (step !== null && STEP_PHASES[step]) || "other";
+  return step !== null && Object.hasOwn(STEP_PHASES, step)
+    ? STEP_PHASES[step]
+    : "other";
 }
 
 /** A cost in euros, and the models with tokens that the price table cannot price. */

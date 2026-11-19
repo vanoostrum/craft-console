@@ -24,7 +24,7 @@
       "wait_seconds": 4800
     },
     {
-      "step": "craft:setup",
+      "step": "setup",
       "ticket": null,
       "started_at": "2026-11-22T09:05:00.000Z",
       "ended_at": "2026-11-22T09:50:00.000Z",

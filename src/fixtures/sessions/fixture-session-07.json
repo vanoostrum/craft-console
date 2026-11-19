@@ -24,7 +24,7 @@
       "wait_seconds": 6000
     },
     {
-      "step": "craft:build",
+      "step": "build",
       "ticket": "NAP-107",
       "started_at": "2026-11-07T09:05:00.000Z",
       "ended_at": "2026-11-07T09:50:00.000Z",
@@ -43,7 +43,7 @@
       "wait_seconds": 8400
     },
     {
-      "step": "craft:review",
+      "step": "review",
       "ticket": "NAP-107",
       "started_at": "2026-11-07T10:05:00.000Z",
       "ended_at": "2026-11-07T10:50:00.000Z",

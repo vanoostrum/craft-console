@@ -55,7 +55,7 @@ The tickets of a project that belong to no plan.
 The work of a project that names no ticket, such as a `craft:next` run on its own, and brief sessions whose plan does not exist yet.
 
 **Phase**:
-What a segment did: `plan`, `spec`, `design`, `build`, `review`, `merge`, or `other`. A segment of `craft:plan`, `craft:spec`, `craft:design`, `craft:build`, `craft:review`, or `craft:merge` has the phase of that name. Every other segment, such as `craft:brainstorm`, `craft:setup`, `craft:next`, or a segment with no step, has the phase `other`.
+What a segment did: `plan`, `spec`, `design`, `build`, `review`, `merge`, or `other`. A segment with the stored step `plan`, `spec`, `design`, `build`, `review`, or `merge` has the phase of that name. Every other segment, such as a `brainstorm`, `setup`, or `next` segment, or a segment with no step, has the phase `other`. The stored step is the name of the craft step without `craft:`: a `craft:build` call stores `build`.
 _Avoid_: Step (a step is the craft skill; the phase is the column)
 
 **Segment**:

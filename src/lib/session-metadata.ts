@@ -34,7 +34,7 @@ const Segment = z.object({
   model: z.string().nullable().optional(),
   work_seconds: z.number().optional(),
   wait_seconds: z.number().optional(),
-  /** For a `craft:brainstorm` or `craft:setup` segment: the URL of the brief it wrote. */
+  /** For a `brainstorm` or `setup` segment: the URL of the brief it wrote. */
   brief: z.string().nullable().optional(),
 });
 

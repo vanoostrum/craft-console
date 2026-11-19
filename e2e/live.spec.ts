@@ -133,6 +133,63 @@ test("lists each repository with sessions from the bucket and tickets from Linea
   await expect(page.locator("main").getByRole("alert")).toHaveCount(0);
 });
 
+/** A segment of ALP-1 with `output` claude-opus-5-5 output tokens: $20 per million. */
+const segment = (step: string, output: number) => ({
+  step,
+  ticket: "ALP-1",
+  started_at: "2026-11-01T09:00:00Z",
+  ended_at: "2026-11-01T09:30:00Z",
+  tokens: {
+    "claude-opus-5-5": {
+      input_tokens: 0,
+      output_tokens: output,
+      cache_creation_input_tokens: 0,
+      cache_read_input_tokens: 0,
+    },
+  },
+  subagents: [],
+});
+
+test("a segment with an unknown step counts toward other, and its session still shows", async ({
+  page,
+}) => {
+  // deploy: 100,000 tokens, $2.00, €1.86. build: 50,000 tokens, $1.00, €0.93.
+  stub.scenario = scenario(
+    [
+      session(
+        "vanoostrum/alpha",
+        "a1",
+        ["ALP-1"],
+        [segment("deploy", 100_000), segment("build", 50_000)],
+      ),
+    ],
+    ["ALP-1"],
+  );
+  const { url } = await start();
+  await page.goto(url);
+  expect(await rows(page)).toEqual([["vanoostrum/alpha", "1", "1"]]);
+  const alpha = page.locator("tbody tr").first();
+  await expect(alpha.locator("td").nth(2)).toHaveText("€2.79");
+  await expect(alpha.locator(".mix")).toHaveAttribute(
+    "title",
+    "build 33%, other 67%",
+  );
+  await expect(page.locator("main").getByRole("status")).toHaveCount(0);
+  await expect(page.locator("main").getByRole("alert")).toHaveCount(0);
+
+  const response = await page.goto(`${url}/projects/vanoostrum/alpha`);
+  expect(response?.status()).toBe(200);
+  const cells = page
+    .locator("table.grid tbody tr", { hasText: "ALP-1" })
+    .locator("td");
+  await expect(cells.nth(4)).toContainText("€0.93"); // build
+  await expect(cells.nth(7)).toContainText("€1.86"); // other
+  await expect(cells.nth(8)).toHaveText("€2.79");
+  await expect(page.locator("tr.total td").nth(8)).toHaveText("€2.79");
+  await expect(page.locator("main").getByRole("status")).toHaveCount(0);
+  await expect(page.locator("main").getByRole("alert")).toHaveCount(0);
+});
+
 test("with no credentials, sends no Authorization header to the bucket or Linear", async ({
   page,
 }) => {

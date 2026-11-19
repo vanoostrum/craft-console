@@ -13,7 +13,7 @@ const segment = (
   tokens: Segment["tokens"],
   subagents: Segment["tokens"][] = [],
 ): Segment => ({
-  step: "craft:build",
+  step: "build",
   ticket: "X-1",
   started_at: null,
   ended_at: null,
@@ -98,17 +98,18 @@ describe("segmentCost", () => {
 
 describe("phaseOf", () => {
   it.each([
-    ["craft:plan", "plan"],
-    ["craft:spec", "spec"],
-    ["craft:design", "design"],
-    ["craft:build", "build"],
-    ["craft:review", "review"],
-    ["craft:merge", "merge"],
-    ["craft:brainstorm", "other"],
-    ["craft:setup", "other"],
-    ["craft:next", "other"],
-    ["plan", "other"],
-    ["craft:unknown", "other"],
+    ["plan", "plan"],
+    ["spec", "spec"],
+    ["design", "design"],
+    ["build", "build"],
+    ["review", "review"],
+    ["merge", "merge"],
+    ["brainstorm", "other"],
+    ["setup", "other"],
+    ["next", "other"],
+    ["deploy", "other"],
+    ["craft:build", "other"],
+    ["constructor", "other"],
     [null, "other"],
   ] as const)("gives %j the phase %s", (step, phase) => {
     expect(phaseOf(step)).toBe(phase);
