@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overview table · Component · Craft Console gallery</title>
+<link rel="stylesheet" href="../gallery.css">
+</head>
+<body>
+<main class="sheet">
+  <p class="crumbs"><a href="index.html">Components</a> / Overview table</p>
+  <h1 class="sheet-title">Overview table</h1>
+  <p class="sheet-rule">One row per project: the name with the repository after it, then numbers in mono, right aligned. Cost and craft time are white; waiting is amber; Max share is an estimate in muted text. "No repository" has no repository after it.</p>
+  <section class="specimen" aria-label="Overview table: Rows">
+    <h2>Rows</h2>
+    <div class="specimen-body">
+      <section class="panel" aria-label="Overview table">
+        <table>
+          <thead>
+            <tr><th>Project</th><th class="num">Tickets</th><th class="num">Cost</th><th class="num">Avg cost</th><th class="num">Craft time</th><th class="num">Avg time</th><th class="num">Waiting on you</th><th class="num">Max share · Nov</th><th class="mix-col">Phase mix · cost</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="name"><a href="#">NapTime</a><span class="repo">vanoostrum/nap-time</span></td>
+              <td class="num">11</td><td class="num strong">€192.30</td><td class="num">€17.48</td>
+              <td class="num strong">5h02m</td><td class="num">27m</td><td class="num wait">196h</td>
+              <td class="num est">≈ €51</td>
+              <td><div class="mix" title="plan 17%, spec 43%, design 3%, build 17%, review 10%, merge 5%, other 5%"><span class="p-plan w17"></span><span class="p-spec w43"></span><span class="p-design w3"></span><span class="p-build w17"></span><span class="p-review w10"></span><span class="p-merge w5"></span><span class="p-other w5"></span></div></td>
+            </tr>
+            <tr>
+              <td class="name"><a href="#">Sandbox</a><span class="repo">vanoostrum/sandbox</span></td>
+              <td class="num">1</td><td class="num strong">€0.84 *</td><td class="num">€0.84</td>
+              <td class="num strong">—</td><td class="num">—</td><td class="num wait">—</td>
+              <td class="num est">≈ €0</td>
+              <td><div class="mix" title="build 100%"><span class="p-build w100"></span></div></td>
+            </tr>
+            <tr>
+              <td class="name"><a href="#">No repository</a></td>
+              <td class="num">0</td><td class="num strong">€3.10</td><td class="num">—</td>
+              <td class="num strong">9m</td><td class="num">—</td><td class="num wait">2h00m</td>
+              <td class="num est">≈ €1</td>
+              <td><div class="mix" title="other 100%"><span class="p-other w100"></span></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </section>
+  <section class="specimen" aria-label="Overview table: Name hover">
+    <h2>Name hover</h2>
+    <div class="specimen-body">
+      <section class="panel" aria-label="Overview table">
+        <table>
+          <thead>
+            <tr><th>Project</th><th class="num">Tickets</th><th class="num">Cost</th><th class="num">Avg cost</th><th class="num">Craft time</th><th class="num">Avg time</th><th class="num">Waiting on you</th><th class="num">Max share · Nov</th><th class="mix-col">Phase mix · cost</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="name"><a href="#" class="is-hover">NapTime</a><span class="repo">vanoostrum/nap-time</span></td>
+              <td class="num">11</td><td class="num strong">€192.30</td><td class="num">€17.48</td>
+              <td class="num strong">5h02m</td><td class="num">27m</td><td class="num wait">196h</td>
+              <td class="num est">≈ €51</td>
+              <td><div class="mix" title="plan 17%, spec 43%, design 3%, build 17%, review 10%, merge 5%, other 5%"><span class="p-plan w17"></span><span class="p-spec w43"></span><span class="p-design w3"></span><span class="p-build w17"></span><span class="p-review w10"></span><span class="p-merge w5"></span><span class="p-other w5"></span></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </section>
+  <section class="specimen" aria-label="Overview table: Name focus">
+    <h2>Name focus</h2>
+    <div class="specimen-body">
+      <section class="panel" aria-label="Overview table">
+        <table>
+          <thead>
+            <tr><th>Project</th><th class="num">Tickets</th><th class="num">Cost</th><th class="num">Avg cost</th><th class="num">Craft time</th><th class="num">Avg time</th><th class="num">Waiting on you</th><th class="num">Max share · Nov</th><th class="mix-col">Phase mix · cost</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="name"><a href="#" class="is-focus">NapTime</a><span class="repo">vanoostrum/nap-time</span></td>
+              <td class="num">11</td><td class="num strong">€192.30</td><td class="num">€17.48</td>
+              <td class="num strong">5h02m</td><td class="num">27m</td><td class="num wait">196h</td>
+              <td class="num est">≈ €51</td>
+              <td><div class="mix" title="plan 17%, spec 43%, design 3%, build 17%, review 10%, merge 5%, other 5%"><span class="p-plan w17"></span><span class="p-spec w43"></span><span class="p-design w3"></span><span class="p-build w17"></span><span class="p-review w10"></span><span class="p-merge w5"></span><span class="p-other w5"></span></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </section>
+  <section class="specimen" aria-label="Overview table: Empty">
+    <h2>Empty</h2>
+    <div class="specimen-body">
+      <section class="panel" aria-label="Overview table">
+        <table>
+          <thead>
+            <tr><th>Project</th><th class="num">Tickets</th><th class="num">Cost</th><th class="num">Avg cost</th><th class="num">Craft time</th><th class="num">Avg time</th><th class="num">Waiting on you</th><th class="num">Max share · Nov</th><th class="mix-col">Phase mix · cost</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="empty-row" colspan="9">No sessions in the transcript bucket yet.</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Top bar · Component · Craft Console gallery</title>
+<link rel="stylesheet" href="../gallery.css">
+</head>
+<body>
+<main class="sheet">
+  <p class="crumbs"><a href="index.html">Components</a> / Top bar</p>
+  <h1 class="sheet-title">Top bar</h1>
+  <p class="sheet-rule">The bar on every page: the logo, the tabs, and the Shade by switch on the right. The current tab has aria-current="page" and an accent underline. On a phone it wraps; it never scrolls.</p>
+  <section class="specimen" aria-label="Top bar: Projects tab current">
+    <h2>Projects tab current</h2>
+    <div class="specimen-body">
+      <header class="topbar">
+        <div class="logo">craft://console</div>
+        <nav class="tabs" aria-label="Main">
+          <a href="../pages/projects/default.html" aria-current="page">Projects</a>
+          <a href="../pages/craft-versions/default.html">Craft versions</a>
+        </nav>
+        <div class="tools">
+          <span class="label">Shade by</span>
+          <div class="toggle" role="group" aria-label="Shade by">
+            <a href="#" aria-current="true">€ cost</a>
+            <a href="#">craft time</a>
+          </div>
+        </div>
+      </header>
+    </div>
+  </section>
+  <section class="specimen" aria-label="Top bar: Craft versions tab current, shaded by craft time">
+    <h2>Craft versions tab current, shaded by craft time</h2>
+    <div class="specimen-body">
+      <header class="topbar">
+        <div class="logo">craft://console</div>
+        <nav class="tabs" aria-label="Main">
+          <a href="../pages/projects/default.html">Projects</a>
+          <a href="../pages/craft-versions/default.html" aria-current="page">Craft versions</a>
+        </nav>
+        <div class="tools">
+          <span class="label">Shade by</span>
+          <div class="toggle" role="group" aria-label="Shade by">
+            <a href="#">€ cost</a>
+            <a href="#" aria-current="true">craft time</a>
+          </div>
+        </div>
+      </header>
+    </div>
+  </section>
+  <section class="specimen" aria-label="Top bar: Tab hover">
+    <h2>Tab hover</h2>
+    <div class="specimen-body">
+      <header class="topbar">
+        <div class="logo">craft://console</div>
+        <nav class="tabs" aria-label="Main">
+          <a href="../pages/projects/default.html" aria-current="page">Projects</a>
+          <a href="../pages/craft-versions/default.html" class="is-hover">Craft versions</a>
+        </nav>
+        <div class="tools">
+          <span class="label">Shade by</span>
+          <div class="toggle" role="group" aria-label="Shade by">
+            <a href="#" aria-current="true">€ cost</a>
+            <a href="#">craft time</a>
+          </div>
+        </div>
+      </header>
+    </div>
+  </section>
+  <section class="specimen" aria-label="Top bar: Tab focus">
+    <h2>Tab focus</h2>
+    <div class="specimen-body">
+      <header class="topbar">
+        <div class="logo">craft://console</div>
+        <nav class="tabs" aria-label="Main">
+          <a href="../pages/projects/default.html" aria-current="page">Projects</a>
+          <a href="../pages/craft-versions/default.html" class="is-focus">Craft versions</a>
+        </nav>
+        <div class="tools">
+          <span class="label">Shade by</span>
+          <div class="toggle" role="group" aria-label="Shade by">
+            <a href="#" aria-current="true">€ cost</a>
+            <a href="#">craft time</a>
+          </div>
+        </div>
+      </header>
+    </div>
+  </section>
+</main>
+</body>
+</html>

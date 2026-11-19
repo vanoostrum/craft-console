@@ -45,6 +45,14 @@ a:hover {
   color: var(--accent-hover);
 }
 
+/* Focus: a visible outline on every link and button, from the keyboard. */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 .topbar {
   display: flex;
   flex-wrap: wrap;
@@ -197,6 +205,10 @@ tr.no-repo td.name {
 .toggle a[aria-current="true"] {
   background: var(--pressed);
   color: var(--strong);
+}
+/* .toggle clips its overflow, so the outline sits inside the link. */
+.toggle a:focus-visible {
+  outline-offset: -2px;
 }
 
 /* Overview rows */
@@ -385,7 +397,7 @@ table.grid {
   margin-top: 2px;
 }
 .grid .empty {
-  color: var(--phase-other);
+  color: var(--faint);
 }
 .grid .key {
   font-family: var(--mono);
@@ -438,20 +450,35 @@ table.grid {
 .fold[aria-expanded="true"]::before {
   content: "▾";
 }
+/* Shade steps: solid blues, so white text and the second line pass WCAG AA on every step. */
 .c1 {
-  background: rgba(76, 141, 255, 0.14);
+  background: #162238;
 }
 .c2 {
-  background: rgba(76, 141, 255, 0.28);
+  background: #1a2d4f;
 }
 .c3 {
-  background: rgba(76, 141, 255, 0.45);
+  background: #1f3a68;
 }
 .c4 {
-  background: rgba(76, 141, 255, 0.65);
+  background: #244782;
 }
 .c5 {
-  background: rgba(76, 141, 255, 0.85);
+  background: #2a559c;
+}
+.grid .cell.c1,
+.grid .cell.c2,
+.grid .cell.c3,
+.grid .cell.c4,
+.grid .cell.c5 {
+  color: var(--strong);
+}
+.grid .cell.c1 div + div,
+.grid .cell.c2 div + div,
+.grid .cell.c3 div + div,
+.grid .cell.c4 div + div,
+.grid .cell.c5 div + div {
+  color: var(--text);
 }
 
 /* Craft versions */

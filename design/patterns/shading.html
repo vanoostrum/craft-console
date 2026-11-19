@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shading · Pattern · Craft Console gallery</title>
+<link rel="stylesheet" href="../gallery.css">
+</head>
+<body>
+<main class="sheet">
+  <p class="crumbs"><a href="index.html">Patterns</a> / Shading</p>
+  <h1 class="sheet-title">Shading</h1>
+  <p class="sheet-rule">Cells shade in five solid blue steps, relative to the largest compared cell: step = max(1, ceil(5 × value ÷ largest)). Shaded text is white, its second line light grey. Group rows, totals, the Unknown version row, and cells with no value for the shade are not shaded.</p>
+  <section class="specimen" aria-label="Shading: Five steps">
+    <h2>Five steps</h2>
+    <div class="specimen-body">
+      <section class="panel" aria-label="Grid">
+        <table class="grid">
+          <thead><tr><th>Ticket</th><th>plan</th><th>spec</th><th>design</th><th>build</th><th>review</th><th>merge</th><th>other</th><th class="sep">cost</th><th>craft time</th><th>waiting on you</th></tr></thead>
+          <tbody>
+            <tr><td><span class="key">NAP-102</span>Record an entry<span class="state">Done</span></td><td class="cell c1"><div>€1.10</div><div>2m</div></td><td class="cell c2"><div>€4.90</div><div>7m</div></td><td class="cell c3"><div>€9.80</div><div>14m</div></td><td class="cell c4"><div>€14.90</div><div>21m</div></td><td class="cell c5"><div>€22.50</div><div>33m</div></td><td class="cell"><div>€0.40</div><div>1m</div></td><td class="empty">·</td><td class="tot sep">€53.60</td><td class="tot">1h18m</td><td class="wait">4h10m</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </section>
+</main>
+</body>
+</html>

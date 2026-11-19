@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Empty and not-found states · Pattern · Craft Console gallery</title>
+<link rel="stylesheet" href="../gallery.css">
+</head>
+<body>
+<main class="sheet">
+  <p class="crumbs"><a href="index.html">Patterns</a> / Empty and not-found states</p>
+  <h1 class="sheet-title">Empty and not-found states</h1>
+  <p class="sheet-rule">With no data, a page keeps its frame and its panel head, and says so in one line: in the table for the overview, under the head for Craft versions. An unknown project is a panel head that says what is missing, with "Back to Projects" as its primary.</p>
+  <section class="specimen" aria-label="Empty and not-found states: Empty table">
+    <h2>Empty table</h2>
+    <div class="specimen-body">
+      <section class="panel" aria-label="Overview table">
+        <table>
+          <thead>
+            <tr><th>Project</th><th class="num">Tickets</th><th class="num">Cost</th><th class="num">Avg cost</th><th class="num">Craft time</th><th class="num">Avg time</th><th class="num">Waiting on you</th><th class="num">Max share · Nov</th><th class="mix-col">Phase mix · cost</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="empty-row" colspan="9">No sessions in the transcript bucket yet.</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </section>
+  <section class="specimen" aria-label="Empty and not-found states: Empty panel">
+    <h2>Empty panel</h2>
+    <div class="specimen-body">
+      <section class="panel" aria-label="Empty"><div class="panel-head"><h2>Craft versions <span class="sub">/ average per ticket, all projects</span></h2><a class="primary" href="#">Craft releases</a></div><p class="note">No craft version has finished a ticket yet.</p></section>
+    </div>
+  </section>
+  <section class="specimen" aria-label="Empty and not-found states: Not found">
+    <h2>Not found</h2>
+    <div class="specimen-body">
+      <section class="panel" aria-label="Not found"><div class="panel-head"><h2>No sessions for vanoostrum/unknown <span class="sub">/ craft has no session in this repository. Check the address, or go back to Projects.</span></h2><a class="primary" href="#">Back to Projects</a></div></section>
+    </div>
+  </section>
+</main>
+</body>
+</html>
