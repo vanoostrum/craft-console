@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Number formats · Pattern · Craft Console gallery</title>
+<link rel="stylesheet" href="../gallery.css">
+</head>
+<body>
+<main class="sheet">
+  <p class="crumbs"><a href="index.html">Patterns</a> / Number formats</p>
+  <h1 class="sheet-title">Number formats</h1>
+  <p class="sheet-rule">Numbers are mono and right aligned. Cost: €1,234.50, with " *" when a model has no price. Time: 27m under an hour, 5h02m under 100 hours, 196h from 100 hours. No data: "—". An estimate starts with "≈". A change: "▼ 20% vs 2.8.2" in green, "▲ 26% vs 2.7.0" in red, "0% vs 2.8.1" plain.</p>
+  <section class="specimen" aria-label="Number formats: Formats">
+    <h2>Formats</h2>
+    <div class="specimen-body">
+      <section class="panel" aria-label="Formats">
+        <table>
+          <thead><tr><th>Kind</th><th class="num">Example</th></tr></thead>
+          <tbody>
+            <tr><td class="name">Cost</td><td class="num strong">€1,234.50</td></tr>
+            <tr><td class="name">Cost, a model without a price</td><td class="num strong">€0.84 *</td></tr>
+            <tr><td class="name">Time under an hour</td><td class="num">27m</td></tr>
+            <tr><td class="name">Time under 100 hours</td><td class="num">5h02m</td></tr>
+            <tr><td class="name">Time from 100 hours</td><td class="num">196h</td></tr>
+            <tr><td class="name">No data</td><td class="num">—</td></tr>
+            <tr><td class="name">Estimate</td><td class="num est">≈ €51</td></tr>
+            <tr><td class="name">Less than the version before</td><td class="num"><span class="delta down">▼ 20% vs 2.8.2</span></td></tr>
+            <tr><td class="name">More than the version before</td><td class="num"><span class="delta up">▲ 26% vs 2.7.0</span></td></tr>
+            <tr><td class="name">No change</td><td class="num"><span class="delta">0% vs 2.8.1</span></td></tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grid · Component · Craft Console gallery</title>
+<link rel="stylesheet" href="../gallery.css">
+</head>
+<body>
+<main class="sheet">
+  <p class="crumbs"><a href="index.html">Components</a> / Grid</p>
+  <h1 class="sheet-title">Grid</h1>
+  <p class="sheet-rule">Rows × phases in mono. A cell is the cost, then the craft time on a second, smaller line; a cell with no time data shows only its cost. "·" marks a phase with no work. Totals are white, after a separator. Groups and milestones fold.</p>
+  <section class="specimen" aria-label="Grid: Shade steps c1 to c5, an unshaded cell, a "·" cell">
+    <h2>Shade steps c1 to c5, an unshaded cell, a "·" cell</h2>
+    <div class="specimen-body">
+      <section class="panel" aria-label="Grid">
+        <table class="grid">
+          <thead><tr><th>Ticket</th><th>plan</th><th>spec</th><th>design</th><th>build</th><th>review</th><th>merge</th><th>other</th><th class="sep">cost</th><th>craft time</th><th>waiting on you</th></tr></thead>
+          <tbody>
+            <tr><td><span class="key">NAP-102</span>Record an entry<span class="state">Done</span></td><td class="cell c1"><div>€1.10</div><div>2m</div></td><td class="cell c2"><div>€4.90</div><div>7m</div></td><td class="cell c3"><div>€9.80</div><div>14m</div></td><td class="cell c4"><div>€14.90</div><div>21m</div></td><td class="cell c5"><div>€22.50</div><div>33m</div></td><td class="cell"><div>€0.40</div><div>1m</div></td><td class="empty">·</td><td class="tot sep">€53.60</td><td class="tot">1h18m</td><td class="wait">4h10m</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </section>
+  <section class="specimen" aria-label="Grid: Group, milestone, ticket in a milestone, No ticket, total">
+    <h2>Group, milestone, ticket in a milestone, No ticket, total</h2>
+    <div class="specimen-body">
+      <section class="panel" aria-label="Grid">
+        <table class="grid">
+          <thead><tr><th>Ticket</th><th>plan</th><th>spec</th><th>design</th><th>build</th><th>review</th><th>merge</th><th>other</th><th class="sep">cost</th><th>craft time</th><th>waiting on you</th></tr></thead>
+          <tbody>
+            <tr class="group"><td><button type="button" class="fold" aria-expanded="true" aria-label="Fold Plan: Sample app v1"></button>Plan: Sample app v1</td><td class="cell"><div>€26.10</div><div>29m</div></td><td class="cell"><div>€62.20</div><div>1h11m</div></td><td class="cell"><div>€6.00</div><div>9m</div></td><td class="cell"><div>€14.90</div><div>49m</div></td><td class="cell"><div>€7.30</div><div>16m</div></td><td class="cell"><div>€2.30</div><div>4m</div></td><td class="cell"><div>€4.20</div><div>6m</div></td><td class="tot sep">€123.00</td><td class="tot">3h04m</td><td class="wait">95h</td></tr>
+            <tr class="milestone"><td><button type="button" class="fold" aria-expanded="false" aria-label="Open Sample app v1: Reports"></button>Sample app v1: Reports</td><td class="empty">·</td><td class="cell"><div>€34.80</div><div>37m</div></td><td class="cell"><div>€4.90</div><div>7m</div></td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="tot sep">€39.70</td><td class="tot">44m</td><td class="wait">8h20m</td></tr>
+            <tr class="in-milestone"><td><span class="key">NAP-101</span>Add a profile<span class="state">In Review</span></td><td class="empty">·</td><td class="cell c2"><div>€6.40</div><div>10m</div></td><td class="empty">·</td><td class="cell c1"><div>€3.60</div></td><td class="cell c1"><div>€2.80</div><div>8m</div></td><td class="empty">·</td><td class="empty">·</td><td class="tot sep">€12.80</td><td class="tot">18m</td><td class="wait">2h00m</td></tr>
+            <tr><td>No ticket</td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="empty">·</td><td class="cell"><div>€1.90</div><div>3m</div></td><td class="tot sep">€1.90</td><td class="tot">3m</td><td class="wait">—</td></tr>
+            <tr class="total"><td>Total</td><td class="cell"><div>€26.10</div><div>29m</div></td><td class="cell"><div>€62.20</div><div>1h11m</div></td><td class="cell"><div>€6.00</div><div>9m</div></td><td class="cell"><div>€14.90</div><div>49m</div></td><td class="cell"><div>€7.30</div><div>16m</div></td><td class="cell"><div>€2.30</div><div>4m</div></td><td class="cell"><div>€6.10</div><div>9m</div></td><td class="tot sep">€124.90</td><td class="tot">3h07m</td><td class="wait">95h</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </section>
+  <section class="specimen" aria-label="Grid: Fold button focus">
+    <h2>Fold button focus</h2>
+    <div class="specimen-body">
+      <section class="panel" aria-label="Grid">
+        <table class="grid">
+          <thead><tr><th>Ticket</th><th>plan</th><th>spec</th><th>design</th><th>build</th><th>review</th><th>merge</th><th>other</th><th class="sep">cost</th><th>craft time</th><th>waiting on you</th></tr></thead>
+          <tbody>
+            <tr class="group"><td><button type="button" class="fold is-focus" aria-expanded="true" aria-label="Fold Plan: Sample app v1"></button>Plan: Sample app v1</td><td class="cell"><div>€26.10</div><div>29m</div></td><td class="cell"><div>€62.20</div><div>1h11m</div></td><td class="cell"><div>€6.00</div><div>9m</div></td><td class="cell"><div>€14.90</div><div>49m</div></td><td class="cell"><div>€7.30</div><div>16m</div></td><td class="cell"><div>€2.30</div><div>4m</div></td><td class="cell"><div>€4.20</div><div>6m</div></td><td class="tot sep">€123.00</td><td class="tot">3h04m</td><td class="wait">95h</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </section>
+  <section class="specimen" aria-label="Grid: Craft versions: change lines and the Unknown version row">
+    <h2>Craft versions: change lines and the Unknown version row</h2>
+    <div class="specimen-body">
+      <section class="panel" aria-label="Grid">
+        <table class="grid">
+          <thead><tr><th>Version</th><th>Tickets</th><th>plan</th><th>spec</th><th>design</th><th>build</th><th>review</th><th>merge</th><th>other</th><th class="sep">cost a ticket</th><th>time a ticket</th></tr></thead>
+          <tbody>
+            <tr><td><span class="key">2.9.0</span></td><td>4</td><td class="empty">·</td><td class="cell c2"><div>€5.10</div><div>8m</div></td><td class="empty">·</td><td class="cell c1"><div>€3.20</div><div>12m</div></td><td class="cell c1"><div>€2.10</div><div>6m</div></td><td class="cell c1"><div>€0.60</div><div>1m</div></td><td class="cell c1"><div>€0.40</div><div>1m</div></td><td class="tot sep">€11.40<span class="delta down">▼ 20% vs 2.8.2</span></td><td class="tot">28m<span class="delta">0% vs 2.8.2</span></td></tr>
+            <tr><td><span class="key">2.8.0</span></td><td>6</td><td class="cell c2"><div>€8.80</div><div>13m</div></td><td class="cell c5"><div>€22.50</div><div>16m</div></td><td class="cell c1"><div>€2.10</div></td><td class="cell c1"><div>€3.90</div><div>17m</div></td><td class="cell c1"><div>€3.60</div><div>10m</div></td><td class="cell c1"><div>€1.10</div><div>2m</div></td><td class="cell c1"><div>€0.70</div><div>1m</div></td><td class="tot sep">€42.70<span class="delta up">▲ 26% vs 2.7.0</span></td><td class="tot">59m<span class="delta">first version</span></td></tr>
+            <tr class="unknown"><td>Unknown version</td><td>4</td><td class="cell"><div>€7.00</div><div>11m</div></td><td class="cell"><div>€14.50</div><div>22m</div></td><td class="empty">·</td><td class="cell"><div>€11.30</div><div>22m</div></td><td class="cell"><div>€9.40</div><div>21m</div></td><td class="cell"><div>€5.90</div><div>3m</div></td><td class="cell"><div>€1.90</div><div>1m</div></td><td class="tot sep">€50.00</td><td class="tot">1h20m</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </section>
+</main>
+</body>
+</html>

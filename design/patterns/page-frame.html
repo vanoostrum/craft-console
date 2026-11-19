@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page frame · Pattern · Craft Console gallery</title>
+<link rel="stylesheet" href="../gallery.css">
+</head>
+<body>
+<main class="sheet">
+  <p class="crumbs"><a href="index.html">Patterns</a> / Page frame</p>
+  <h1 class="sheet-title">Page frame</h1>
+  <p class="sheet-rule">Every page is the top bar, then main with 20px padding (16px on a phone) and 20px between blocks. A project page puts crumbs and summary tiles before its panel. Nothing scrolls sideways but a panel.</p>
+  <section class="specimen" aria-label="Page frame: Frame">
+    <h2>Frame</h2>
+    <div class="specimen-body">
+      <header class="topbar">
+        <div class="logo">craft://console</div>
+        <nav class="tabs" aria-label="Main">
+          <a href="../pages/projects/default.html" aria-current="page">Projects</a>
+          <a href="../pages/craft-versions/default.html">Craft versions</a>
+        </nav>
+        <div class="tools">
+          <span class="label">Shade by</span>
+          <div class="toggle" role="group" aria-label="Shade by">
+            <a href="#" aria-current="true">€ cost</a>
+            <a href="#">craft time</a>
+          </div>
+        </div>
+      </header>
+      <div class="frame-demo">
+        <p class="crumbs"><a href="#">Projects</a> / NapTime</p>
+      <div class="summary" aria-label="Totals">
+        <div class="tile"><div class="k">Cost</div><div class="v">€192.30</div><small>11 tickets · €17.48 a ticket</small></div>
+        <div class="tile"><div class="k">Craft time</div><div class="v">5h02m</div><small>27m a ticket</small></div>
+        <div class="tile"><div class="k">Waiting on you</div><div class="v wait">196h</div><small>time between craft's question and your answer</small></div>
+        <div class="tile"><div class="k">Max share · Nov</div><div class="v est">≈ €51</div><small>estimate, of your €93 Max plan</small></div>
+      </div>
+      <section class="panel" aria-label="NapTime">
+        <div class="panel-head">
+          <h2>NapTime <span class="sub">vanoostrum/nap-time / tickets × phases</span></h2>
+          <a class="primary" href="#">Open the bucket</a>
+        </div>
+        <div class="panel-body">Panel content.</div>
+      </section>
+      </div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

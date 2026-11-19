@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notice · Component · Craft Console gallery</title>
+<link rel="stylesheet" href="../gallery.css">
+</head>
+<body>
+<main class="sheet">
+  <p class="crumbs"><a href="index.html">Components</a> / Notice</p>
+  <h1 class="sheet-title">Notice</h1>
+  <p class="sheet-rule">A notice sits under the panel head. Skipped files: role="status", an amber edge, the paths in mono. A failed read: role="alert", a red edge and a red lead.</p>
+  <section class="specimen" aria-label="Notice: Skipped files">
+    <h2>Skipped files</h2>
+    <div class="specimen-body">
+      <section class="panel" aria-label="Notice">
+        <div class="notice" role="status">2 session files could not be read and are not counted:
+          <ul>
+            <li>vanoostrum/craft/sessions/2f9c41d0-8a7e-5b31-9c04-6d2e8f1a7b55/metadata.json</li>
+            <li>vanoostrum/nap-time/sessions/a71e09b4-3c2d-5f68-8e1b-04c9d7f25a13/metadata.json</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </section>
+  <section class="specimen" aria-label="Notice: Error">
+    <h2>Error</h2>
+    <div class="specimen-body">
+      <section class="panel" aria-label="Error notice">
+        <p class="notice error" role="alert"><strong>Could not read the transcript bucket:</strong> 403 Forbidden. The page shows no numbers until the transcript bucket and Linear can both be read.</p>
+      </section>
+    </div>
+  </section>
+</main>
+</body>
+</html>
