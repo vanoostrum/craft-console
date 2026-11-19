@@ -5,7 +5,7 @@
   "tickets": ["NAP-103"],
   "segments": [
     {
-      "step": "craft:build",
+      "step": "build",
       "ticket": "NAP-103",
       "started_at": "2026-10-31T21:00:00.000Z",
       "ended_at": "2026-10-31T22:50:00.000Z",
@@ -24,7 +24,7 @@
       "wait_seconds": 7800
     },
     {
-      "step": "craft:review",
+      "step": "review",
       "ticket": "NAP-103",
       "started_at": "2026-10-31T23:00:00.000Z",
       "ended_at": "2026-10-31T23:30:00.000Z",

@@ -5,7 +5,7 @@
   "tickets": ["NAP-101"],
   "segments": [
     {
-      "step": "craft:merge",
+      "step": "merge",
       "ticket": "NAP-101",
       "started_at": "2026-11-14T09:05:00.000Z",
       "ended_at": "2026-11-14T09:50:00.000Z",

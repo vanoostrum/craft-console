@@ -5,7 +5,7 @@
   "tickets": ["WEB-1", "NAP-120"],
   "segments": [
     {
-      "step": "craft:spec",
+      "step": "spec",
       "ticket": "WEB-1",
       "started_at": "2026-11-19T09:00:00.000Z",
       "ended_at": "2026-11-19T09:08:00.000Z",
@@ -24,7 +24,7 @@
       "wait_seconds": 1200
     },
     {
-      "step": "craft:build",
+      "step": "build",
       "ticket": "NAP-120",
       "started_at": "2026-11-19T09:10:00.000Z",
       "ended_at": "2026-11-19T09:18:00.000Z",

@@ -5,7 +5,7 @@
   "tickets": ["CRAFT-903"],
   "segments": [
     {
-      "step": "craft:spec",
+      "step": "spec",
       "ticket": "CRAFT-903",
       "started_at": "2026-11-19T09:05:00.000Z",
       "ended_at": "2026-11-19T09:50:00.000Z",

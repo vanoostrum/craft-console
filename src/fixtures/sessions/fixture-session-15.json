@@ -5,7 +5,7 @@
   "tickets": [],
   "segments": [
     {
-      "step": "craft:plan",
+      "step": "plan",
       "ticket": null,
       "started_at": "2026-11-16T09:05:00.000Z",
       "ended_at": "2026-11-16T09:50:00.000Z",
